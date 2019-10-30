@@ -437,17 +437,30 @@ func JoinedError(msgs []string) error {
 //----------------------------------------------------------------------------------------------------------------------------//
 
 // LogProcessingTime  --
-func LogProcessingTime(id uint64, module string, t0 int64) int64 {
+func LogProcessingTime(level string, id uint64, module string, message string, t0 int64) int64 {
+	if level == "" {
+		level = "T1"
+	}
+
+	if message == "" {
+		message = "Processing time"
+	}
+
 	prefix := ""
-	if id == 0 {
-		prefix = "[" + module + "]"
-	} else {
-		prefix = "[" + strconv.FormatUint(id, 10) + "] " + module + ":"
+	if id != 0 {
+		prefix = "[" + strconv.FormatUint(id, 10) + "] "
+	}
+	if module != "" {
+		if prefix == "" {
+			prefix = "[" + module + "] "
+		} else {
+			prefix += module + ": "
+		}
 	}
 
 	now := NowUTC().UnixNano()
 	duration := (now - t0) / int64(time.Microsecond)
-	Logger("T4", "%s Processing time %d.%03d ms", prefix, duration/1000, duration%1000)
+	Logger(level, "%s%s %d.%03d ms", prefix, message, duration/1000, duration%1000)
 	return now
 }
 
