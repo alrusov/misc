@@ -26,6 +26,14 @@ const EOS string = "\n"
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
+// InterfaceMap --
+type InterfaceMap map[string]interface{}
+
+// StringMap --
+type StringMap map[string]string
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
 // go build --ldflags "-X github.com/alrusov/misc.appVersion=${VERSION} -X github.com/alrusov/misc.buildTime=`date +'%Y-%m-%d_%H:%M:%S'` -X github.com/alrusov/misc.copyright=${COPYRIGHT}"
 
 var appVersion string
