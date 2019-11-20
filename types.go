@@ -72,31 +72,6 @@ func (m InterfaceMap) GetString(name string) (v string, err error) {
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
-// MarshalBin --
-// Don't forget call bufpool.PutBuf(buf) in the calling function!
-func (m InterfaceMap) MarshalBin() (buf *bytes.Buffer, err error) {
-	if m == nil {
-		err = fmt.Errorf("nil map")
-		return
-	}
-	buf = bufpool.GetBuf()
-	encoder := gob.NewEncoder(buf)
-	err = encoder.Encode(m)
-	return
-}
-
-// UnmarshalBin --
-func (m InterfaceMap) UnmarshalBin(buf *bytes.Buffer) (err error) {
-	if m == nil {
-		err = fmt.Errorf("nil map")
-		return
-	}
-	decoder := gob.NewDecoder(buf)
-	return decoder.Decode(&m)
-}
-
-//----------------------------------------------------------------------------------------------------------------------------//
-
 // Iface2Float --
 func Iface2Float(x interface{}) (v float64, err error) {
 	switch x.(type) {
@@ -176,6 +151,23 @@ func Iface2String(x interface{}) (v string, err error) {
 		err = fmt.Errorf(`Illegal type of "%#v" - "%T", expected "%T"`, x, x, "")
 		return
 	}
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+// MarshalBin --
+// Don't forget call bufpool.PutBuf(buf) in the calling function!
+func MarshalBin(src interface{}) (buf *bytes.Buffer, err error) {
+	buf = bufpool.GetBuf()
+	encoder := gob.NewEncoder(buf)
+	err = encoder.Encode(src)
+	return
+}
+
+// UnmarshalBin --
+func UnmarshalBin(buf *bytes.Buffer, dst interface{}) (err error) {
+	decoder := gob.NewDecoder(buf)
+	return decoder.Decode(dst)
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//

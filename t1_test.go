@@ -3,14 +3,12 @@ package misc
 import (
 	"reflect"
 	"testing"
-
-	"github.com/alrusov/bufpool"
 )
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
 func TestIMcoder(t *testing.T) {
-	src := InterfaceMap{
+	block := InterfaceMap{
 		"int64":         int64(12345),
 		"int32":         int32(54321),
 		"string":        "123456789",
@@ -21,15 +19,20 @@ func TestIMcoder(t *testing.T) {
 		//"intSliceEmpty2": []int{}, // dst will have value "[]int(nil)"" which is equivalent in most cases but reflect.DeepEqual will give an error
 	}
 
-	b, err := src.MarshalBin()
+	src := []InterfaceMap{
+		block,
+		block,
+		block,
+	}
+	dst := []InterfaceMap{}
+
+	buf, err := MarshalBin(src)
 	if err != nil {
 		t.Errorf(err.Error())
 		return
 	}
-	defer bufpool.PutBuf(b)
 
-	dst := InterfaceMap{}
-	err = dst.UnmarshalBin(b)
+	err = UnmarshalBin(buf, &dst)
 	if err != nil {
 		t.Errorf(err.Error())
 		return
@@ -38,7 +41,6 @@ func TestIMcoder(t *testing.T) {
 	if !reflect.DeepEqual(src, dst) {
 		t.Errorf("src(%#v) != dst(%#v)", src, dst)
 	}
-
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
