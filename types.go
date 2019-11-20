@@ -1,8 +1,12 @@
 package misc
 
 import (
+	"bytes"
+	"encoding/gob"
 	"fmt"
 	"strconv"
+
+	"github.com/alrusov/bufpool"
 )
 
 //----------------------------------------------------------------------------------------------------------------------------//
@@ -12,6 +16,84 @@ type InterfaceMap map[string]interface{}
 
 // StringMap --
 type StringMap map[string]string
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+// GetFloat --
+func (m InterfaceMap) GetFloat(name string) (v float64, err error) {
+	x, exists := m[name]
+	if !exists {
+		err = fmt.Errorf(`%s: parameter not found`, name)
+		return
+	}
+
+	v, err = Iface2Float(x)
+	if err != nil {
+		err = fmt.Errorf("%s: %s", name, err.Error())
+		return
+	}
+
+	return
+}
+
+// GetInt --
+func (m InterfaceMap) GetInt(name string) (v int64, err error) {
+	x, exists := m[name]
+	if !exists {
+		err = fmt.Errorf(`%s: parameter not found`, name)
+		return
+	}
+
+	v, err = Iface2Int(x)
+	if err != nil {
+		err = fmt.Errorf("%s: %s", name, err.Error())
+		return
+	}
+
+	return
+}
+
+// GetString --
+func (m InterfaceMap) GetString(name string) (v string, err error) {
+	x, exists := m[name]
+	if !exists {
+		err = fmt.Errorf(`%s: parameter not found`, name)
+		return
+	}
+
+	v, err = Iface2String(x)
+	if err != nil {
+		err = fmt.Errorf("%s: %s", name, err.Error())
+		return
+	}
+
+	return
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+// MarshalBin --
+// Don't forget call bufpool.PutBuf(buf) in the calling function!
+func (m InterfaceMap) MarshalBin() (buf *bytes.Buffer, err error) {
+	if m == nil {
+		err = fmt.Errorf("nil map")
+		return
+	}
+	buf = bufpool.GetBuf()
+	encoder := gob.NewEncoder(buf)
+	err = encoder.Encode(m)
+	return
+}
+
+// UnmarshalBin --
+func (m InterfaceMap) UnmarshalBin(buf *bytes.Buffer) (err error) {
+	if m == nil {
+		err = fmt.Errorf("nil map")
+		return
+	}
+	decoder := gob.NewDecoder(buf)
+	return decoder.Decode(&m)
+}
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
@@ -94,59 +176,6 @@ func Iface2String(x interface{}) (v string, err error) {
 		err = fmt.Errorf(`Illegal type of "%#v" - "%T", expected "%T"`, x, x, "")
 		return
 	}
-}
-
-//----------------------------------------------------------------------------------------------------------------------------//
-
-// GetFloat --
-func (p InterfaceMap) GetFloat(name string) (v float64, err error) {
-	x, exists := p[name]
-	if !exists {
-		err = fmt.Errorf(`%s: parameter not found`, name)
-		return
-	}
-
-	v, err = Iface2Float(x)
-	if err != nil {
-		err = fmt.Errorf("%s: %s", name, err.Error())
-		return
-	}
-
-	return
-}
-
-// GetInt --
-func (p InterfaceMap) GetInt(name string) (v int64, err error) {
-	x, exists := p[name]
-	if !exists {
-		err = fmt.Errorf(`%s: parameter not found`, name)
-		return
-	}
-
-	v, err = Iface2Int(x)
-	if err != nil {
-		err = fmt.Errorf("%s: %s", name, err.Error())
-		return
-	}
-
-	return
-}
-
-// GetString --
-func (p InterfaceMap) GetString(name string) (v string, err error) {
-	x, exists := p[name]
-	if !exists {
-		err = fmt.Errorf(`%s: parameter not found`, name)
-		return
-	}
-
-	v, err = Iface2String(x)
-	if err != nil {
-		err = fmt.Errorf("%s: %s", name, err.Error())
-		return
-	}
-
-	return
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
