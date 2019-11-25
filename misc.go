@@ -437,8 +437,8 @@ func LogProcessingTime(level string, id uint64, module string, message string, t
 	}
 
 	now := NowUTC().UnixNano()
-	duration := (now - t0) / int64(time.Microsecond)
-	Logger(level, "%s%s %d.%03d ms", prefix, message, duration/1000, duration%1000)
+	duration := now - t0
+	Logger(level, "%s%s %d.%03d ms", prefix, message, duration/int64(time.Millisecond), duration%int64(time.Millisecond))
 	return now
 }
 
