@@ -8,14 +8,12 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"os/signal"
 	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
-	"syscall"
 	"time"
 )
 
@@ -148,26 +146,6 @@ func DelExitFunc(name string) {
 		}
 	}
 	exitChain = chain
-}
-
-//----------------------------------------------------------------------------------------------------------------------------//
-
-func signalHandler() {
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
-
-	for {
-		signal := <-c
-
-		switch signal {
-		case syscall.SIGINT:
-			fallthrough
-		case syscall.SIGTERM:
-			Logger("IN", "Signal \"%s\" received", signal.String())
-			StopApp(0)
-		default:
-		}
-	}
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
