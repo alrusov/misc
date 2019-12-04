@@ -397,9 +397,9 @@ func NowUTC() time.Time {
 //----------------------------------------------------------------------------------------------------------------------------//
 
 // AddMessage --
-func AddMessage(msgs *[]string, msg string) {
+func AddMessage(msgs *[]string, msg string, params ...interface{}) {
 	if msg != "" {
-		*msgs = append(*msgs, msg)
+		*msgs = append(*msgs, fmt.Sprintf(msg, params...))
 	}
 }
 
