@@ -53,6 +53,23 @@ func (m InterfaceMap) GetInt(name string) (v int64, err error) {
 	return
 }
 
+// GetUint --
+func (m InterfaceMap) GetUint(name string) (v uint64, err error) {
+	x, exists := m[name]
+	if !exists {
+		err = fmt.Errorf(`%s: parameter not found`, name)
+		return
+	}
+
+	v, err = Iface2Uint(x)
+	if err != nil {
+		err = fmt.Errorf("%s: %s", name, err.Error())
+		return
+	}
+
+	return
+}
+
 // GetString --
 func (m InterfaceMap) GetString(name string) (v string, err error) {
 	x, exists := m[name]
@@ -119,6 +136,41 @@ func Iface2Int(x interface{}) (v int64, err error) {
 		return
 	case string:
 		v, err = strconv.ParseInt(x.(string), 10, 64)
+		return
+	default:
+		err = fmt.Errorf(`Illegal type of "%#v" - "%T", expected "%T"`, x, x, int64(0))
+		return
+	}
+}
+
+// Iface2Uint --
+func Iface2Uint(x interface{}) (v uint64, err error) {
+	switch x.(type) {
+	case float32:
+		xx := x.(float32)
+		if xx < 0 {
+			err = fmt.Errorf("Negative value: %f", xx)
+		}
+		v = uint64(xx)
+		return
+	case float64:
+		xx := x.(float64)
+		if xx < 0 {
+			err = fmt.Errorf("Negative value: %f", xx)
+		}
+		v = uint64(xx)
+		return
+	case int:
+		v = uint64(x.(int))
+		return
+	case int32:
+		v = uint64(x.(int32))
+		return
+	case int64:
+		v = x.(uint64)
+		return
+	case string:
+		v, err = strconv.ParseUint(x.(string), 10, 64)
 		return
 	default:
 		err = fmt.Errorf(`Illegal type of "%#v" - "%T", expected "%T"`, x, x, int64(0))

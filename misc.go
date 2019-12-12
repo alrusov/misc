@@ -9,6 +9,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -184,7 +185,7 @@ func init() {
 
 // IsDebug --
 func IsDebug() bool {
-	return appExecName == "debug" // simple workaround for the VS Code
+	return appExecName == "__debug_bin" // simple workaround for the VS Code
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
@@ -440,6 +441,18 @@ func LogProcessingTime(level string, id uint64, module string, message string, t
 	duration := now - t0
 	Logger(level, "%s%s %d.%03d ms", prefix, message, duration/int64(time.Millisecond), (duration%int64(time.Millisecond))/1000)
 	return now
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+var (
+	reSlashes = regexp.MustCompile(`([^:])/{2,}`)
+)
+
+// NormalizeSlashes --
+func NormalizeSlashes(u string) string {
+	u = strings.TrimRight(u, "/")
+	return reSlashes.ReplaceAllString(u, `$1/`)
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
