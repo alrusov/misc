@@ -2,6 +2,7 @@ package misc
 
 import (
 	"reflect"
+	"runtime"
 	"testing"
 )
 
@@ -60,6 +61,42 @@ func TestNormalizeSlashes(t *testing.T) {
 	for i, p := range smp {
 		i++
 		out := NormalizeSlashes(p.in)
+		if out != p.out {
+			t.Errorf(`Case %d failed: in "%s", out "%s", expected: "%s"`, i, p.in, out, p.out)
+		}
+	}
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+func TestAbsPath(t *testing.T) {
+	type samples struct {
+		in  string
+		out string
+	}
+	var smp []samples
+
+	switch runtime.GOOS {
+	case "windows":
+		smp = []samples{
+			{`c:/qqq/www\eee`, `c:\qqq\www\eee`},
+			{`qqq/www/eee`, appExecPath + `\qqq\www\eee`},
+			{`\qqq\www\eee`, appExecPath + `\qqq\www\eee`},
+		}
+	case "linux":
+		smp = []samples{
+			{`/qqq/www/eee`, `/qqq/www/eee`},
+			{`qqq/www/eee`, appExecPath + `/qqq/www/eee`},
+		}
+	}
+
+	for i, p := range smp {
+		i++
+		out, err := AbsPath(p.in)
+		if err != nil {
+			t.Errorf(`Case %d failed: in "%s", got error "%s"`, i, p.in, err.Error())
+			continue
+		}
 		if out != p.out {
 			t.Errorf(`Case %d failed: in "%s", out "%s", expected: "%s"`, i, p.in, out, p.out)
 		}

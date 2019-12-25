@@ -183,6 +183,17 @@ func init() {
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
+// AbsPath --
+func AbsPath(name string) (string, error) {
+	if !filepath.IsAbs(name) {
+		name = AppExecPath() + "/" + name
+	}
+
+	return filepath.Abs(name)
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
 // IsDebug --
 func IsDebug() bool {
 	return appExecName == "__debug_bin" // simple workaround for the VS Code
