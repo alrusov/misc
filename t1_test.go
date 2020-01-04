@@ -82,11 +82,13 @@ func TestAbsPath(t *testing.T) {
 			{`c:/qqq/www\eee`, `c:\qqq\www\eee`},
 			{`qqq/www/eee`, appExecPath + `\qqq\www\eee`},
 			{`\qqq\www\eee`, appExecPath + `\qqq\www\eee`},
+			{`@qqq\www\eee`, appWorkDir + `\qqq\www\eee`},
 		}
 	case "linux":
 		smp = []samples{
 			{`/qqq/www/eee`, `/qqq/www/eee`},
 			{`qqq/www/eee`, appExecPath + `/qqq/www/eee`},
+			{`@qqq/www/eee`, appWorkDir + `/qqq/www/eee`},
 		}
 	}
 
