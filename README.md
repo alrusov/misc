@@ -1,1 +1,1 @@
-Package misc implements a differents trivial functions
+Package misc implements a differents trivial  functions
