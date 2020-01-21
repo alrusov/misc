@@ -11,11 +11,26 @@ import (
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
-// InterfaceMap --
-type InterfaceMap map[string]interface{}
+type (
+	// CtxString --
+	CtxString string
 
-// StringMap --
-type StringMap map[string]string
+	// CtxInt64 --
+	CtxInt64 int64
+
+	// CtxUint64 --
+	CtxUint64 uint64
+)
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+type (
+	// InterfaceMap --
+	InterfaceMap map[string]interface{}
+
+	// StringMap --
+	StringMap map[string]string
+)
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
