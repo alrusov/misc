@@ -33,6 +33,6 @@ const DateTimeFormatJSON string = DateFormatRev + "T" + TimeFormatWithMS + "Z"
 const DateTimeFormatShortJSON string = DateFormatRev + "T" + TimeFormat
 
 // DateTimeFormatTZ --
-const DateTimeFormatTZ = "-0700Z"
+const DateTimeFormatTZ = "-0700"
 
 //----------------------------------------------------------------------------------------------------------------------------//
