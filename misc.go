@@ -442,7 +442,9 @@ func LogProcessingTime(level string, id uint64, module string, message string, t
 	}
 
 	if message == "" {
-		message = "Processing time"
+		message = "Elapsed time"
+	} else {
+		message += ", elapsed time"
 	}
 
 	prefix := ""
