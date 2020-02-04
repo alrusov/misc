@@ -23,6 +23,32 @@ import (
 // EOS -- EndOfString
 const EOS string = "\n"
 
+// Appliction exit codes
+const (
+	// ExVersion --
+	ExVersion int = iota + 100
+	// ExMissingConfigFile --
+	ExMissingConfigFile
+	// ExIncorrectConfigFile --
+	ExIncorrectConfigFile
+	// ExConfigIncorrect --
+	ExConfigIncorrect
+	// ExConfigErrors --
+	ExConfigErrors
+	// ExCreateListenerError --
+	ExCreateListenerError
+	// ExStartListenerError --
+	ExStartListenerError
+	// ExServiceInitializationError --
+	ExServiceInitializationError
+	// ExServiceError --
+	ExServiceError
+	// ExAccessDenied --
+	ExAccessDenied
+	// ExProgrammerError --
+	ExProgrammerError
+)
+
 //----------------------------------------------------------------------------------------------------------------------------//
 
 // go build --ldflags "-X github.com/alrusov/misc.appVersion=${VERSION} -X github.com/alrusov/misc.buildTime=`date +'%Y-%m-%d_%H:%M:%S'` -X github.com/alrusov/misc.copyright=${COPYRIGHT}"
