@@ -30,6 +30,24 @@ type (
 
 	// StringMap --
 	StringMap map[string]string
+
+	// BoolMap --
+	BoolMap map[string]bool
+
+	// IntMap --
+	IntMap map[string]int
+
+	// Int64Map --
+	Int64Map map[string]int64
+
+	// UintMap --
+	UintMap map[string]uint
+
+	// Uint64Map --
+	Uint64Map map[string]uint64
+
+	// Float64Map --
+	Float64Map map[string]float64
 )
 
 //----------------------------------------------------------------------------------------------------------------------------//
