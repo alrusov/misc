@@ -28,6 +28,9 @@ type (
 	// InterfaceMap --
 	InterfaceMap map[string]interface{}
 
+	// ByteSliceMap --
+	ByteSliceMap map[string][]byte
+
 	// StringMap --
 	StringMap map[string]string
 
