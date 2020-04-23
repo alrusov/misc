@@ -22,8 +22,10 @@ import (
 
 // Appliction exit codes
 const (
+	// ExStopped --
+	ExStopped int = iota + 200
 	// ExVersion --
-	ExVersion int = iota + 100
+	ExVersion
 	// ExMissingConfigFile --
 	ExMissingConfigFile
 	// ExIncorrectConfigFile --
