@@ -52,9 +52,10 @@ const (
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
-// go build --ldflags "-X github.com/alrusov/misc.appVersion=${VERSION} -X github.com/alrusov/misc.buildTime=`date +'%Y-%m-%d_%H:%M:%S'` -X github.com/alrusov/misc.copyright=${COPYRIGHT}"
+// go build --ldflags "-X github.com/alrusov/misc.appVersion=${VERSION} -X github.com/alrusov/misc.appTags=${TAGS} -X github.com/alrusov/misc.buildTime=`date +'%Y-%m-%d_%H:%M:%S'` -X github.com/alrusov/misc.copyright=${COPYRIGHT}"
 
 var appVersion string
+var appTags string
 var copyright string
 var buildTime string
 var buildTimeTS time.Time
@@ -197,6 +198,8 @@ func init() {
 	}
 	copyright = strings.Replace(copyright, "_", " ", -1)
 	buildTime = strings.Replace(buildTime, "_", " ", -1)
+	appVersion = strings.Replace(appVersion, "_", " ", -1)
+	appTags = strings.Replace(appTags, "_", " ", -1)
 
 	buildTimeTS, _ = time.Parse(DateTimeFormatRev, buildTime)
 
@@ -247,6 +250,19 @@ func AppStartTime() time.Time {
 // AppVersion -- application version
 func AppVersion() string {
 	return appVersion
+}
+
+// AppTags -- application tags
+func AppTags(quoted bool) string {
+	if appTags == "" {
+		return ""
+	}
+
+	if quoted {
+		return ` "` + appTags + `"`
+	}
+
+	return appTags
 }
 
 // Copyright --
