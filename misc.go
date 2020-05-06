@@ -253,15 +253,7 @@ func AppVersion() string {
 }
 
 // AppTags -- application tags
-func AppTags(quoted bool) string {
-	if appTags == "" {
-		return ""
-	}
-
-	if quoted {
-		return ` "` + appTags + `"`
-	}
-
+func AppTags() string {
 	return appTags
 }
 
