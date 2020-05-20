@@ -90,7 +90,9 @@ type exitElement struct {
 
 var exitChain = make([]exitElement, 0)
 
-type loggerFunc func(level string, message string, params ...interface{})
+type (
+	loggerFunc func(facility string, level string, message string, params ...interface{})
+)
 
 // Logger --
 var Logger loggerFunc
@@ -99,18 +101,18 @@ var Logger loggerFunc
 
 func killer() {
 	time.Sleep(5000 * time.Millisecond)
-	Logger("CR", "Application shutdown timeout. Forced completion.")
+	Logger("", "CR", "Application shutdown timeout. Forced completion.")
 	go Exit()
 
 	time.Sleep(5000 * time.Millisecond)
-	Logger("CR", "Application forced completion timeout. Forced Killing.")
+	Logger("", "CR", "Application forced completion timeout. Forced Killing.")
 	os.Exit(exitCode)
 }
 
 // StopApp -- set exit code and raise application stop
 func StopApp(code int) {
 	if atomic.AddInt32(&appStarted, -1) == 0 {
-		Logger("DE", "Set application exit code %d", code)
+		Logger("", "DE", "Set application exit code %d", code)
 
 		exitCode = code
 
@@ -146,16 +148,16 @@ func Exit() {
 			StopApp(0)
 		}
 
-		Logger("IN", "Try to finish application with code %d", exitCode)
+		Logger("", "IN", "Try to finish application with code %d", exitCode)
 
 		time.Sleep(1000 * time.Millisecond)
 
 		for i := len(exitChain) - 1; i >= 0; i-- {
-			Logger("DE", "Call finalizer \"%s\"", exitChain[i].name)
+			Logger("", "DE", "Call finalizer \"%s\"", exitChain[i].name)
 			exitChain[i].f(exitCode, exitChain[i].param)
 		}
 
-		Logger("IN", "Application finished with code %d", exitCode)
+		Logger("", "IN", "Application finished with code %d", exitCode)
 		os.Exit(exitCode)
 	}
 }
@@ -180,7 +182,7 @@ func DelExitFunc(name string) {
 //----------------------------------------------------------------------------------------------------------------------------//
 
 // SimpleLogger --
-func simpleLogger(level string, message string, params ...interface{}) {
+func simpleLogger(facility string, level string, message string, params ...interface{}) {
 	fmt.Printf(level+": "+message+EOS, params...)
 }
 
@@ -471,7 +473,7 @@ func JoinedError(msgs []string) error {
 //----------------------------------------------------------------------------------------------------------------------------//
 
 // LogProcessingTime  --
-func LogProcessingTime(level string, id uint64, module string, message string, t0 int64) int64 {
+func LogProcessingTime(facility string, level string, id uint64, module string, message string, t0 int64) int64 {
 	if level == "" {
 		level = "T1"
 	}
@@ -496,7 +498,7 @@ func LogProcessingTime(level string, id uint64, module string, message string, t
 
 	now := NowUTC().UnixNano()
 	duration := now - t0
-	Logger(level, "%s%s %d.%03d ms", prefix, message, duration/int64(time.Millisecond), (duration%int64(time.Millisecond))/1000)
+	Logger(facility, level, "%s%s %d.%03d ms", prefix, message, duration/int64(time.Millisecond), (duration%int64(time.Millisecond))/1000)
 	return now
 }
 
