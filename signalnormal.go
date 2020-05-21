@@ -21,12 +21,12 @@ func signalHandler() {
 		case syscall.SIGINT:
 			fallthrough
 		case syscall.SIGTERM:
-			Logger("IN", "Signal \"%s\" received", signal.String())
+			Logger("", "IN", "Signal \"%s\" received", signal.String())
 			StopApp(0)
 		case syscall.SIGCHLD:
 			fallthrough
 		default:
-			Logger("DE", "Signal \"%s\" received", signal.String())
+			Logger("", "DE", "Signal \"%s\" received", signal.String())
 		}
 	}
 }
