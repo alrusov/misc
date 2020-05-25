@@ -1,6 +1,7 @@
 package misc
 
 import (
+	"bytes"
 	"reflect"
 	"runtime"
 	"testing"
@@ -102,6 +103,48 @@ func TestAbsPath(t *testing.T) {
 		if out != p.out {
 			t.Errorf(`Case %d failed: in "%s", out "%s", expected: "%s"`, i, p.in, out, p.out)
 		}
+	}
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+func TestGzip(t *testing.T) {
+	s := `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1234567890qwertiopasdfghjkl;'\zxcvbnm,./1234567890qwertiopasdfghjkl;`
+
+	packed, err := GzipPack(bytes.NewReader([]byte(s)))
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	saved := bytes.NewBuffer(packed.Bytes())
+
+	unpacked, err := GzipUnpack(packed)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	if s != string(unpacked.Bytes()) {
+		t.Errorf(`got "%s", expected "%s"`, unpacked, s)
+		return
+	}
+
+	packed2, err := GzipRepack(saved)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	unpacked2, err := GzipUnpack(packed2)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	if s != string(unpacked2.Bytes()) {
+		t.Errorf(`got "%s", expected "%s"`, unpacked2, s)
+		return
 	}
 }
 

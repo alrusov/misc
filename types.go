@@ -5,8 +5,6 @@ import (
 	"encoding/gob"
 	"fmt"
 	"strconv"
-
-	"github.com/alrusov/bufpool"
 )
 
 //----------------------------------------------------------------------------------------------------------------------------//
@@ -244,9 +242,8 @@ func Iface2String(x interface{}) (v string, err error) {
 //----------------------------------------------------------------------------------------------------------------------------//
 
 // MarshalBin --
-// Don't forget call bufpool.PutBuf(buf) in the calling function!
 func MarshalBin(src interface{}) (buf *bytes.Buffer, err error) {
-	buf = bufpool.GetBuf()
+	buf = new(bytes.Buffer)
 	encoder := gob.NewEncoder(buf)
 	err = encoder.Encode(src)
 	return
