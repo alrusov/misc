@@ -46,14 +46,14 @@ func GzipUnpack(data io.Reader) (b *bytes.Buffer, err error) {
 		defer r.Close()
 	}
 
-	if err != nil || r == nil {
+	if err != nil {
 		return nil, err
 	}
 
 	b = new(bytes.Buffer)
 
 	_, err = b.ReadFrom(r)
-	if err != nil || r == nil {
+	if err != nil {
 		return nil, err
 	}
 
