@@ -218,7 +218,7 @@ func init() {
 // AbsPathEx --
 func AbsPathEx(name string, base string) (string, error) {
 	if strings.HasPrefix(name, `@`) {
-		name = name[1:]
+		name = appWorkDir + "/" + name[1:]
 	} else if strings.HasPrefix(name, `^`) {
 		name = base + "/" + name[1:]
 	} else if !filepath.IsAbs(name) {
