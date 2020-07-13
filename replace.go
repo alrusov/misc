@@ -24,6 +24,7 @@ func NewReplace() *Replace {
 
 // Add --
 func (r *Replace) Add(re string, replaceTo string) error {
+	re = "(?U)" + re
 	exp, err := regexp.Compile(re)
 	if err != nil {
 		return err
