@@ -454,20 +454,40 @@ func NowUTC() time.Time {
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
-// AddMessage --
-func AddMessage(msgs *[]string, msg string, params ...interface{}) {
+// Messages --
+type Messages []string
+
+// Add --
+func (m Messages) Add(msg string, params ...interface{}) {
 	if msg != "" {
-		*msgs = append(*msgs, fmt.Sprintf(msg, params...))
+		m = append(m, fmt.Sprintf(msg, params...))
 	}
 }
 
-// JoinedError --
-func JoinedError(msgs []string) error {
-	if len(msgs) > 0 {
-		s := strings.Join(msgs, "; ")
-		return errors.New(s)
+// AddError --
+func (m Messages) AddError(err error) {
+	if err != nil {
+		m = append(m, err.Error())
 	}
-	return nil
+}
+
+// String --
+func (m Messages) String() string {
+	if len(m) == 0 {
+		return ""
+	}
+
+	return strings.Join(m, "; ")
+}
+
+// Error --
+func (m Messages) Error() error {
+	s := m.String()
+	if s == "" {
+		return nil
+	}
+
+	return errors.New(s)
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
