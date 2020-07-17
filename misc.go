@@ -452,6 +452,16 @@ func NowUTC() time.Time {
 	return time.Now().UTC()
 }
 
+// NowUnix --
+func NowUnix() int64 {
+	return time.Now().Unix()
+}
+
+// NowUnixNano --
+func NowUnixNano() int64 {
+	return time.Now().UnixNano()
+}
+
 //----------------------------------------------------------------------------------------------------------------------------//
 
 // Messages --
@@ -516,7 +526,7 @@ func LogProcessingTime(facility string, level string, id uint64, module string, 
 		}
 	}
 
-	now := NowUTC().UnixNano()
+	now := NowUnixNano()
 	duration := now - t0
 	Logger(facility, level, "%s%s %d.%03d ms", prefix, message, duration/int64(time.Millisecond), (duration%int64(time.Millisecond))/1000)
 	return now
