@@ -52,50 +52,60 @@ const (
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
-// go build --ldflags "-X github.com/alrusov/misc.appVersion=${VERSION} -X github.com/alrusov/misc.appTags=${TAGS} -X github.com/alrusov/misc.buildTime=`date +'%Y-%m-%d_%H:%M:%S'` -X github.com/alrusov/misc.copyright=${COPYRIGHT}"
-
-var appVersion string
-var appTags string
-var copyright string
-var buildTime string
-var buildTimeTS time.Time
+var (
+	// TEST -- test mode
+	TEST = false
+)
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
-var startTime time.Time
+// go build --ldflags "-X github.com/alrusov/misc.appVersion=${VERSION} -X github.com/alrusov/misc.appTags=${TAGS} -X github.com/alrusov/misc.buildTime=`date +'%Y-%m-%d_%H:%M:%S'` -X github.com/alrusov/misc.copyright=${COPYRIGHT}"
 
-var appFullName string
-var appExecPath string
-var appExecName string
-var appName string
-var appWorkDir string
-
-var appStarted = int32(1)
-var exitLaunched = int32(0)
-
-var exitCode = 0
-
-var sleepInterrupt = make(chan bool, 1)
-
-// ExitFunc --
-type ExitFunc func(code int, param interface{})
-
-var cond *sync.Cond
-
-type exitElement struct {
-	name  string
-	f     ExitFunc
-	param interface{}
-}
-
-var exitChain = make([]exitElement, 0)
-
-type (
-	loggerFunc func(facility string, level string, message string, params ...interface{})
+var (
+	appVersion  string
+	appTags     string
+	copyright   string
+	buildTime   string
+	buildTimeTS time.Time
 )
 
-// Logger --
-var Logger loggerFunc
+//----------------------------------------------------------------------------------------------------------------------------//
+
+var (
+	startTime time.Time
+
+	appFullName string
+	appExecPath string
+	appExecName string
+	appName     string
+	appWorkDir  string
+
+	appStarted   = int32(1)
+	exitLaunched = int32(0)
+
+	exitCode = 0
+
+	sleepInterrupt = make(chan bool, 1)
+
+	cond      *sync.Cond
+	exitChain = make([]exitElement, 0)
+
+	// Logger --
+	Logger loggerFunc
+)
+
+type (
+	// ExitFunc --
+	ExitFunc func(code int, param interface{})
+
+	exitElement struct {
+		name  string
+		f     ExitFunc
+		param interface{}
+	}
+
+	loggerFunc func(facility string, level string, message string, params ...interface{})
+)
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
@@ -219,6 +229,9 @@ func init() {
 func AbsPathEx(name string, base string) (string, error) {
 	if strings.HasPrefix(name, `@`) {
 		name = appWorkDir + "/" + name[1:]
+	} else if strings.HasPrefix(name, `$`) {
+		d, _ := os.Getwd()
+		name = d + "/" + name[1:]
 	} else if strings.HasPrefix(name, `^`) {
 		name = base + "/" + name[1:]
 	} else if !filepath.IsAbs(name) {
