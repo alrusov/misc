@@ -1,5 +1,7 @@
 package misc
 
+import "time"
+
 //----------------------------------------------------------------------------------------------------------------------------//
 
 // DateFormat -- standard format of the date
@@ -29,10 +31,39 @@ const DateTimeFormatRevWithMS string = DateFormatRev + " " + TimeFormatWithMS
 // DateTimeFormatJSON -- JSON format
 const DateTimeFormatJSON string = DateFormatRev + "T" + TimeFormatWithMS + "Z"
 
-// DateTimeFormatShortJSON -- JSON format
+// DateTimeFormatJSONTZ -- JSON format with TZ
+const DateTimeFormatJSONTZ string = DateFormatRev + "T" + TimeFormatWithMS + DateTimeFormatTZ
+
+// DateTimeFormatShortJSON -- Short JSON format
 const DateTimeFormatShortJSON string = DateFormatRev + "T" + TimeFormat
 
+// DateTimeFormatShortJSONTZ -- Short JSON format with TZ
+const DateTimeFormatShortJSONTZ string = DateFormatRev + "T" + TimeFormat + DateTimeFormatTZ
+
 // DateTimeFormatTZ --
-const DateTimeFormatTZ = "-0700"
+const DateTimeFormatTZ = "Z07:00"
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+var jsonFormats = []string{
+	DateTimeFormatJSON,
+	DateTimeFormatJSONTZ,
+	DateTimeFormatShortJSON,
+	DateTimeFormatShortJSONTZ,
+	DateFormatRev + "T" + TimeFormatWithMS + "-0700",
+	DateFormatRev + "T" + TimeFormat + "-0700",
+}
+
+// ParseJSONtime --
+func ParseJSONtime(s string) (t time.Time, err error) {
+	for _, f := range jsonFormats {
+		t, err = time.Parse(f, s)
+		if err == nil {
+			return
+		}
+	}
+
+	return
+}
 
 //----------------------------------------------------------------------------------------------------------------------------//
