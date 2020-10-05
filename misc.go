@@ -475,8 +475,8 @@ func NowUnixNano() int64 {
 	return time.Now().UnixNano()
 }
 
-// UTCfromUnixNano --
-func UTCfromUnixNano(ts int64) time.Time {
+// UnixNano2UTC --
+func UnixNano2UTC(ts int64) time.Time {
 	return time.Unix(ts/int64(time.Second), ts%int64(time.Second)).UTC()
 }
 
