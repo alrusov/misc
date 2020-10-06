@@ -67,3 +67,39 @@ func ParseJSONtime(s string) (t time.Time, err error) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
+
+// Time2JSON --
+func Time2JSON(t time.Time) string {
+	return t.Format(DateTimeFormatJSON)
+}
+
+// UnixNano2JSON --
+func UnixNano2JSON(ts int64) string {
+	return Time2JSON(UnixNano2UTC(ts))
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+// UnixNano2UTC --
+func UnixNano2UTC(ts int64) time.Time {
+	return time.Unix(ts/int64(time.Second), ts%int64(time.Second)).UTC()
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+// NowUTC --
+func NowUTC() time.Time {
+	return time.Now().UTC()
+}
+
+// NowUnix --
+func NowUnix() int64 {
+	return time.Now().Unix()
+}
+
+// NowUnixNano --
+func NowUnixNano() int64 {
+	return time.Now().UnixNano()
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//

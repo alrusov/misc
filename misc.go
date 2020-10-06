@@ -460,28 +460,6 @@ func IsMyIP(ip string) (bool, error) {
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
-// NowUTC --
-func NowUTC() time.Time {
-	return time.Now().UTC()
-}
-
-// NowUnix --
-func NowUnix() int64 {
-	return time.Now().Unix()
-}
-
-// NowUnixNano --
-func NowUnixNano() int64 {
-	return time.Now().UnixNano()
-}
-
-// UnixNano2UTC --
-func UnixNano2UTC(ts int64) time.Time {
-	return time.Unix(ts/int64(time.Second), ts%int64(time.Second)).UTC()
-}
-
-//----------------------------------------------------------------------------------------------------------------------------//
-
 // Messages --
 type Messages []string
 
