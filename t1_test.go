@@ -54,10 +54,28 @@ func TestNormalizeSlashes(t *testing.T) {
 		out string
 	}
 	smp := []samples{
+		{"^http://localhost:1234", "^http://localhost:1234"},
+		{"^://///http://localhost:1234", "^://http://localhost:1234"},
+		{"qqqwww/^://///http://localhost:1234", "qqqwww/^://http://localhost:1234"},
+		{"qqqwww/////^://///http://localhost:1234", "qqqwww/^://http://localhost:1234"},
+		{"^:http://localhost:1234", "^:http://localhost:1234"},
+		{"http://localhost:1234", "http://localhost:1234"},
+		{"http://localhost:1234/", "http://localhost:1234"},
 		{"http://localhost", "http://localhost"},
 		{"http://localhost/", "http://localhost"},
 		{"http://localhost/////xxx/////yyy/zzz//", "http://localhost/xxx/yyy/zzz"},
+		{"http://localhost/xxx/////yyy/zzz//", "http://localhost/xxx/yyy/zzz"},
 		{"http:////localhost/////xxx///?u=https:////yyy/zzz//", "http://localhost/xxx/?u=https://yyy/zzz"},
+		{"//localhost", "/localhost"},
+		{"localhost///", "localhost"},
+		{"//localhost///", "/localhost"},
+		{"//localhost/", "/localhost"},
+		{"/localhost/", "/localhost"},
+		{"localhost/", "localhost"},
+		{"localhost", "localhost"},
+		{"//localhost/////xxx/////yyy/zzz//", "/localhost/xxx/yyy/zzz"},
+		{"//localhost/xxx/////yyy/zzz//", "/localhost/xxx/yyy/zzz"},
+		{"////localhost/////xxx///?u=https:////yyy/zzz//", "/localhost/xxx/?u=https://yyy/zzz"},
 	}
 
 	for i, p := range smp {

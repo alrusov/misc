@@ -531,7 +531,7 @@ func LogProcessingTime(facility string, level string, id uint64, module string, 
 //----------------------------------------------------------------------------------------------------------------------------//
 
 var (
-	reSlashes = regexp.MustCompile(`([^:])/{2,}`)
+	reSlashes = regexp.MustCompile(`(^|[^:])/{2,}`)
 )
 
 // NormalizeSlashes --
