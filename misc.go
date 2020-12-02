@@ -463,6 +463,11 @@ func IsMyIP(ip string) (bool, error) {
 // Messages --
 type Messages []string
 
+// Len --
+func (m *Messages) Len() int {
+	return len(*m)
+}
+
 // Add --
 func (m *Messages) Add(msg string, params ...interface{}) {
 	if msg != "" {
@@ -478,17 +483,21 @@ func (m *Messages) AddError(err error) {
 }
 
 // String --
-func (m *Messages) String() string {
+func (m *Messages) String(delimiters ...string) string {
+	dlm := "; "
+	if len(delimiters) != 0 {
+		dlm = strings.Join(delimiters, "")
+	}
 	if len(*m) == 0 {
 		return ""
 	}
 
-	return strings.Join(*m, "; ")
+	return strings.Join(*m, dlm)
 }
 
 // Error --
-func (m *Messages) Error() error {
-	s := m.String()
+func (m *Messages) Error(delimiters ...string) error {
+	s := m.String(delimiters...)
 	if s == "" {
 		return nil
 	}
