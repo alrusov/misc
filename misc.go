@@ -510,7 +510,7 @@ func (m *Messages) Error(delimiters ...string) error {
 // LogProcessingTime  --
 func LogProcessingTime(facility string, level string, id uint64, module string, message string, t0 int64) int64 {
 	if level == "" {
-		level = "T1"
+		level = "TM"
 	}
 
 	if message == "" {
