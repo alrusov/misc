@@ -461,43 +461,63 @@ func IsMyIP(ip string) (bool, error) {
 //----------------------------------------------------------------------------------------------------------------------------//
 
 // Messages --
-type Messages []string
+type Messages struct {
+	mutex *sync.RWMutex
+	s     []string
+}
+
+// NewMessages --
+func NewMessages() *Messages {
+	return &Messages{
+		mutex: new(sync.RWMutex),
+	}
+}
 
 // Len --
 func (m *Messages) Len() int {
-	return len(*m)
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
+
+	return len(m.s)
 }
 
 // Add --
 func (m *Messages) Add(msg string, params ...interface{}) {
 	if msg != "" {
-		*m = append(*m, fmt.Sprintf(msg, params...))
+		m.mutex.Lock()
+		defer m.mutex.Unlock()
+
+		m.s = append(m.s, fmt.Sprintf(msg, params...))
 	}
 }
 
 // AddError --
 func (m *Messages) AddError(err error) {
 	if err != nil {
-		*m = append(*m, err.Error())
+		m.Add(err.Error())
 	}
 }
 
 // String --
-func (m *Messages) String(delimiters ...string) string {
-	dlm := "; "
-	if len(delimiters) != 0 {
-		dlm = strings.Join(delimiters, "")
-	}
-	if len(*m) == 0 {
+func (m *Messages) String(separators ...string) string {
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
+
+	if len(m.s) == 0 {
 		return ""
 	}
 
-	return strings.Join(*m, dlm)
+	sep := "; "
+	if len(separators) != 0 {
+		sep = strings.Join(separators, "")
+	}
+
+	return strings.Join(m.s, sep)
 }
 
 // Error --
-func (m *Messages) Error(delimiters ...string) error {
-	s := m.String(delimiters...)
+func (m *Messages) Error(separators ...string) error {
+	s := m.String(separators...)
 	if s == "" {
 		return nil
 	}
