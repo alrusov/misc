@@ -4,6 +4,8 @@ Package misc implements a differents trivial functions
 package misc
 
 import (
+	"crypto/sha512"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"net"
@@ -567,6 +569,16 @@ var (
 func NormalizeSlashes(u string) string {
 	u = strings.TrimRight(u, "/")
 	return reSlashes.ReplaceAllString(u, `$1/`)
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+// Sha512Hash --
+func Sha512Hash(p []byte) []byte {
+	h := sha512.Sum512(p)
+	s := make([]byte, len(h)*2)
+	hex.Encode(s, h[:])
+	return s
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
