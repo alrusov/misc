@@ -5,6 +5,7 @@ import (
 	"encoding/gob"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 //----------------------------------------------------------------------------------------------------------------------------//
@@ -121,6 +122,23 @@ func (m InterfaceMap) GetString(name string) (v string, err error) {
 	return
 }
 
+// GetBool --
+func (m InterfaceMap) GetBool(name string) (v bool, err error) {
+	x, exists := m[name]
+	if !exists {
+		err = fmt.Errorf(`%s: parameter not found`, name)
+		return
+	}
+
+	v, err = Iface2Bool(x)
+	if err != nil {
+		err = fmt.Errorf("%s: %s", name, err.Error())
+		return
+	}
+
+	return
+}
+
 //----------------------------------------------------------------------------------------------------------------------------//
 
 // Iface2Float --
@@ -145,7 +163,7 @@ func Iface2Float(x interface{}) (v float64, err error) {
 		v, err = strconv.ParseFloat(x.(string), 64)
 		return
 	default:
-		err = fmt.Errorf(`Illegal type of "%#v" - "%T", expected "%T"`, x, x, float64(0))
+		err = fmt.Errorf(`Illegal type of the "%#v" - "%T", expected "%T"`, x, x, float64(0))
 		return
 	}
 }
@@ -172,7 +190,7 @@ func Iface2Int(x interface{}) (v int64, err error) {
 		v, err = strconv.ParseInt(x.(string), 10, 64)
 		return
 	default:
-		err = fmt.Errorf(`Illegal type of "%#v" - "%T", expected "%T"`, x, x, int64(0))
+		err = fmt.Errorf(`Illegal type of the "%#v" - "%T", expected "%T"`, x, x, int64(0))
 		return
 	}
 }
@@ -207,7 +225,7 @@ func Iface2Uint(x interface{}) (v uint64, err error) {
 		v, err = strconv.ParseUint(x.(string), 10, 64)
 		return
 	default:
-		err = fmt.Errorf(`Illegal type of "%#v" - "%T", expected "%T"`, x, x, int64(0))
+		err = fmt.Errorf(`Illegal type of the "%#v" - "%T", expected "%T"`, x, x, int64(0))
 		return
 	}
 }
@@ -234,7 +252,41 @@ func Iface2String(x interface{}) (v string, err error) {
 		v = x.(string)
 		return
 	default:
-		err = fmt.Errorf(`Illegal type of "%#v" - "%T", expected "%T"`, x, x, "")
+		err = fmt.Errorf(`Illegal type of the "%#v" - "%T", expected "%T"`, x, x, "")
+		return
+	}
+}
+
+// Iface2Bool --
+func Iface2Bool(x interface{}) (v bool, err error) {
+	switch x.(type) {
+	case bool:
+		v = x.(bool)
+		return
+	case float32:
+		v = int64(x.(float32)) != 0
+		return
+	case float64:
+		v = int64(x.(float64)) != 0
+		return
+	case int:
+		v = x.(int) != 0
+		return
+	case int32:
+		v = x.(int32) != 0
+		return
+	case int64:
+		v = x.(int64) != 0
+		return
+	case string:
+		v = false
+		switch strings.ToLower(x.(string)) {
+		case "true", "t", "1":
+			v = true
+		}
+		return
+	default:
+		err = fmt.Errorf(`Illegal type of the "%#v" - "%T", expected "%T"`, x, x, int64(0))
 		return
 	}
 }
