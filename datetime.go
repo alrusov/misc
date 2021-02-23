@@ -73,6 +73,16 @@ func Time2JSON(t time.Time) string {
 	return t.Format(DateTimeFormatJSON)
 }
 
+// Time2JSONutc --
+func Time2JSONutc(t time.Time) string {
+	return t.UTC().Format(DateTimeFormatJSON)
+}
+
+// Time2JSONtz --
+func Time2JSONtz(t time.Time) string {
+	return t.Format(DateTimeFormatJSONTZ)
+}
+
 // UnixNano2JSON --
 func UnixNano2JSON(ts int64) string {
 	return Time2JSON(UnixNano2UTC(ts))
