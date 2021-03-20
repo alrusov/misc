@@ -144,7 +144,7 @@ func TestGzip(t *testing.T) {
 		return
 	}
 
-	if s != string(unpacked.Bytes()) {
+	if s != unpacked.String() {
 		t.Errorf(`got "%s", expected "%s"`, unpacked, s)
 		return
 	}
@@ -161,7 +161,7 @@ func TestGzip(t *testing.T) {
 		return
 	}
 
-	if s != string(unpacked2.Bytes()) {
+	if s != unpacked2.String() {
 		t.Errorf(`got "%s", expected "%s"`, unpacked2, s)
 		return
 	}

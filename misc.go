@@ -25,31 +25,31 @@ import (
 // Appliction exit codes
 const (
 	// ExPanic --
-	ExPanic int = iota + 200
+	ExPanic = 70
 	// ExStopped --
-	ExStopped
+	ExStopped = 1
 	// ExVersion --
-	ExVersion
+	ExVersion = 64
 	// ExMissingConfigFile --
-	ExMissingConfigFile
+	ExMissingConfigFile = 66
 	// ExIncorrectConfigFile --
-	ExIncorrectConfigFile
+	ExIncorrectConfigFile = 78
 	// ExConfigIncorrect --
-	ExConfigIncorrect
+	ExConfigIncorrect = 78
 	// ExConfigErrors --
-	ExConfigErrors
+	ExConfigErrors = 78
 	// ExCreateListenerError --
-	ExCreateListenerError
+	ExCreateListenerError = 71
 	// ExStartListenerError --
-	ExStartListenerError
+	ExStartListenerError = 71
 	// ExServiceInitializationError --
-	ExServiceInitializationError
+	ExServiceInitializationError = 71
 	// ExServiceError --
-	ExServiceError
+	ExServiceError = 71
 	// ExAccessDenied --
-	ExAccessDenied
+	ExAccessDenied = 77
 	// ExProgrammerError --
-	ExProgrammerError
+	ExProgrammerError = 70
 )
 
 //----------------------------------------------------------------------------------------------------------------------------//
