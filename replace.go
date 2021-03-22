@@ -50,6 +50,14 @@ func (r *Replace) AddMulti(list map[string]string) error {
 	return nil
 }
 
+// Concat --
+func (r *Replace) Concat(r2 Replace) error {
+	for _, rd := range r2 {
+		*r = append(*r, rd)
+	}
+	return nil
+}
+
 //----------------------------------------------------------------------------------------------------------------------------//
 
 // Do --
