@@ -212,11 +212,11 @@ func TestInterval2Int64(t *testing.T) {
 		isError bool
 		result  int64
 	}{
-		{"", true, 0},
 		{"-1", true, 0},
 		{"-1s", true, 0},
 		{"1x", true, 0},
 		{"5h 2m 30s 1x", true, 0},
+		{"", false, 0},
 		{"0", false, 0},
 		{" 5h    2m   30s    ", false, int64(5*time.Hour + 2*time.Minute + 30*time.Second)},
 		{" 30s  5h    2m  30s    ", false, int64(30*time.Second + 5*time.Hour + 2*time.Minute + 30*time.Second)},

@@ -40,6 +40,10 @@ func Interval2Duration(interval string) (time.Duration, error) {
 func Interval2Int64(interval string) (int64, error) {
 	interval = strings.TrimSpace(interval)
 
+	if interval == "" {
+		return 0, nil
+	}
+
 	if !matchRE.MatchString(interval) {
 		return 0, fmt.Errorf(`Bad interval "%s"`, interval)
 	}
