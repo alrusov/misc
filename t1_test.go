@@ -205,3 +205,43 @@ func TestSha512Hash(t *testing.T) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
+
+func TestInterval2Int64(t *testing.T) {
+	cases := []struct {
+		src     string
+		isError bool
+		result  int64
+	}{
+		{"", true, 0},
+		{"-1", true, 0},
+		{"-1s", true, 0},
+		{"1x", true, 0},
+		{"5h 2m 30s 1x", true, 0},
+		{"0", false, 0},
+		{" 5h    2m   30s    ", false, int64(5*time.Hour + 2*time.Minute + 30*time.Second)},
+		{" 30s  5h    2m  30s    ", false, int64(30*time.Second + 5*time.Hour + 2*time.Minute + 30*time.Second)},
+		{" 30  5h    2m  30    ", false, int64(30*time.Second + 5*time.Hour + 2*time.Minute + 30*time.Second)},
+		{"10ms11ns", false, int64(10*time.Millisecond + 11*time.Nanosecond)},
+	}
+
+	for i, df := range cases {
+		result, err := Interval2Int64(df.src)
+		if df.isError {
+			if err == nil {
+				t.Errorf(`[%d] "%s": has no error, but error expected`, i+1, df.src)
+			}
+			continue
+		}
+
+		if err != nil {
+			t.Errorf(`[%d] "%s": %s`, i+1, df.src, err)
+			continue
+		}
+
+		if result != df.result {
+			t.Errorf(`[%d] "%s": got %d, expected %d`, i+1, df.src, result, df.result)
+		}
+	}
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
