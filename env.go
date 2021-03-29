@@ -57,7 +57,7 @@ func LoadEnv(fileName string) (e error) {
 				return
 			}
 
-			sp := strings.Split(s, "=")
+			sp := strings.SplitN(s, "=", 2)
 			k = strings.TrimSpace(sp[0])
 			v = strings.TrimSpace(sp[1])
 
@@ -67,6 +67,18 @@ func LoadEnv(fileName string) (e error) {
 			}
 
 			ln := len(v)
+
+			if ln >= 2 && v[0] == v[ln-1] {
+				switch v[0] {
+				case '"', '\'':
+					v = v[1 : ln-1]
+					ln = len(v)
+				default:
+					msg = "Unclosed quotes"
+					return
+				}
+			}
+
 			if ln > 0 && v[0] == '(' && v[ln-1] != ')' {
 				continue
 			}
