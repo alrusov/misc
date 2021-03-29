@@ -68,15 +68,14 @@ func LoadEnv(fileName string) (e error) {
 
 			ln := len(v)
 
-			if ln >= 2 && v[0] == v[ln-1] {
-				switch v[0] {
-				case '"', '\'':
-					v = v[1 : ln-1]
-					ln = len(v)
-				default:
+			if ln >= 2 && (v[0] == '"' || v[0] == '\'') {
+				if v[ln-1] != v[0] {
 					msg = "Unclosed quotes"
 					return
 				}
+
+				v = v[1 : ln-1]
+				ln = len(v)
 			}
 
 			if ln > 0 && v[0] == '(' && v[ln-1] != ')' {
