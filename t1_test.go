@@ -254,3 +254,54 @@ func TestEnv(t *testing.T) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
+
+func BenchmarkUnsafeByteSlice2String(b *testing.B) {
+	qs := "1234567890123456789012345678901234567890123456789012345678901234567890"
+	q := []byte(qs)
+
+	for i := 0; i < b.N; i++ {
+		//s := string(q)
+		s := UnsafeByteSlice2String(q)
+		if s != qs {
+			b.Fatalf("%s != %s", s, qs)
+		}
+	}
+}
+
+func BenchmarkStdByteSlice2String(b *testing.B) {
+	qs := "1234567890123456789012345678901234567890123456789012345678901234567890"
+	q := []byte(qs)
+
+	for i := 0; i < b.N; i++ {
+		s := string(q)
+		if s != qs {
+			b.Fatalf("%s != %s", s, qs)
+		}
+	}
+}
+
+func BenchmarkUnsafeString2ByteSlice(b *testing.B) {
+	qs := "1234567890123456789012345678901234567890123456789012345678901234567890"
+	q := []byte(qs)
+
+	for i := 0; i < b.N; i++ {
+		bb := UnsafeString2ByteSlice(qs)
+		if !bytes.Equal(bb, q) {
+			b.Fatalf("%s != %s", bb, q)
+		}
+	}
+}
+
+func BenchmarkStdString2ByteSlice(b *testing.B) {
+	qs := "1234567890123456789012345678901234567890123456789012345678901234567890"
+	q := []byte(qs)
+
+	for i := 0; i < b.N; i++ {
+		bb := []byte(qs)
+		if !bytes.Equal(bb, q) {
+			b.Fatalf("%s != %s", bb, q)
+		}
+	}
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//

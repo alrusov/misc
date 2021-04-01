@@ -18,6 +18,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+	"unsafe"
 )
 
 //----------------------------------------------------------------------------------------------------------------------------//
@@ -579,6 +580,18 @@ func Sha512Hash(p []byte) []byte {
 	s := make([]byte, len(h)*2)
 	hex.Encode(s, h[:])
 	return s
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+// UnsafeByteSlice2String -- fast convert []byte to string without memory allocs
+func UnsafeByteSlice2String(b []byte) string {
+	return *(*string)(unsafe.Pointer(&b))
+}
+
+// UnsafeString2ByteSlice -- fast convert string to []byte without memory allocs, don't try to change result!
+func UnsafeString2ByteSlice(s string) []byte {
+	return *(*[]byte)(unsafe.Pointer(&s))
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
