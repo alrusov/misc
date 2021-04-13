@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"reflect"
 	"runtime"
+	"strings"
 	"testing"
 	"time"
 )
@@ -255,53 +256,88 @@ func TestEnv(t *testing.T) {
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
+var qs = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
+
+func TestUnsafeByteSlice2String(b *testing.T) {
+	s := UnsafeByteSlice2String([]byte(qs))
+	if s != qs {
+		b.Fatalf("%s != %s", s, qs)
+	}
+}
+
+func TestUnsafeString2ByteSlice(b *testing.T) {
+	bb := UnsafeString2ByteSlice(qs)
+	if string(bb) != qs {
+		b.Fatalf("%s != %s", string(bb), qs)
+	}
+}
+
 func BenchmarkUnsafeByteSlice2String(b *testing.B) {
-	qs := "1234567890123456789012345678901234567890123456789012345678901234567890"
 	q := []byte(qs)
 
+	b.StartTimer()
+
 	for i := 0; i < b.N; i++ {
-		//s := string(q)
-		s := UnsafeByteSlice2String(q)
-		if s != qs {
-			b.Fatalf("%s != %s", s, qs)
-		}
+		_ = UnsafeByteSlice2String(q)
 	}
+
+	b.StopTimer()
+	runtime.KeepAlive(b)
 }
 
 func BenchmarkStdByteSlice2String(b *testing.B) {
-	qs := "1234567890123456789012345678901234567890123456789012345678901234567890"
 	q := []byte(qs)
 
+	b.StartTimer()
+
 	for i := 0; i < b.N; i++ {
-		s := string(q)
-		if s != qs {
-			b.Fatalf("%s != %s", s, qs)
-		}
+		_ = string(q)
 	}
+
+	b.StopTimer()
+	runtime.KeepAlive(b)
 }
 
 func BenchmarkUnsafeString2ByteSlice(b *testing.B) {
-	qs := "1234567890123456789012345678901234567890123456789012345678901234567890"
-	q := []byte(qs)
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		bb := UnsafeString2ByteSlice(qs)
-		if !bytes.Equal(bb, q) {
-			b.Fatalf("%s != %s", bb, q)
-		}
+		_ = UnsafeString2ByteSlice(qs)
 	}
+
+	b.StopTimer()
+	runtime.KeepAlive(b)
 }
 
 func BenchmarkStdString2ByteSlice(b *testing.B) {
-	qs := "1234567890123456789012345678901234567890123456789012345678901234567890"
-	q := []byte(qs)
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		bb := []byte(qs)
-		if !bytes.Equal(bb, q) {
-			b.Fatalf("%s != %s", bb, q)
-		}
+		_ = []byte(qs)
 	}
+
+	b.StopTimer()
+	runtime.KeepAlive(b)
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+func TestSplit(t *testing.T) {
+	b := []byte("1234567890,1234567890,1234567890,1234567890,1234567890,1234567890,1234567890,1234567890,1234567890,1234567890,1234567890")
+	s := UnsafeByteSlice2String(b)
+
+	ss := strings.Split(s, ",")
+	ss2 := strings.Split(ss[1], "5")
+
+	b[13] = '!'
+
+	//fmt.Printf("%s\n%s\n%s\n", s, ss[1], ss2[0])
+	expected := "12!4"
+	if ss2[0] != expected {
+		t.Fatalf(`got "%s", expected "%s"`, ss[0], expected)
+	}
+
+	runtime.KeepAlive(b)
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//

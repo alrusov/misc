@@ -11,6 +11,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"runtime"
 	"strconv"
@@ -586,12 +587,25 @@ func Sha512Hash(p []byte) []byte {
 
 // UnsafeByteSlice2String -- fast convert []byte to string without memory allocs
 func UnsafeByteSlice2String(b []byte) string {
-	return *(*string)(unsafe.Pointer(&b))
+	h := (*reflect.SliceHeader)(unsafe.Pointer(&b))
+	s := reflect.StringHeader{
+		Data: h.Data,
+		Len:  h.Len,
+	}
+
+	return *(*string)(unsafe.Pointer(&s))
 }
 
 // UnsafeString2ByteSlice -- fast convert string to []byte without memory allocs, don't try to change result!
 func UnsafeString2ByteSlice(s string) []byte {
-	return *(*[]byte)(unsafe.Pointer(&s))
+	h := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	b := reflect.SliceHeader{
+		Data: h.Data,
+		Len:  h.Len,
+		Cap:  h.Len,
+	}
+
+	return *(*[]byte)(unsafe.Pointer(&b))
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
