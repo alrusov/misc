@@ -263,6 +263,7 @@ func TestUnsafeByteSlice2String(b *testing.T) {
 	if s != qs {
 		b.Fatalf("%s != %s", s, qs)
 	}
+	runtime.KeepAlive(qs) // just as an example, not really required in this case (qs is global)
 }
 
 func TestUnsafeString2ByteSlice(b *testing.T) {
@@ -270,6 +271,7 @@ func TestUnsafeString2ByteSlice(b *testing.T) {
 	if string(bb) != qs {
 		b.Fatalf("%s != %s", string(bb), qs)
 	}
+	runtime.KeepAlive(qs) // just as an example, not really required in this case (qs is global)
 }
 
 func BenchmarkUnsafeByteSlice2String(b *testing.B) {
@@ -282,7 +284,7 @@ func BenchmarkUnsafeByteSlice2String(b *testing.B) {
 	}
 
 	b.StopTimer()
-	runtime.KeepAlive(b)
+	runtime.KeepAlive(qs) // just as an example, not really required in this case (qs is global)
 }
 
 func BenchmarkStdByteSlice2String(b *testing.B) {
@@ -295,7 +297,7 @@ func BenchmarkStdByteSlice2String(b *testing.B) {
 	}
 
 	b.StopTimer()
-	runtime.KeepAlive(b)
+	runtime.KeepAlive(qs) // just as an example, not really required in this case (qs is global)
 }
 
 func BenchmarkUnsafeString2ByteSlice(b *testing.B) {
@@ -306,7 +308,7 @@ func BenchmarkUnsafeString2ByteSlice(b *testing.B) {
 	}
 
 	b.StopTimer()
-	runtime.KeepAlive(b)
+	runtime.KeepAlive(qs) // just as an example, not really required in this case (qs is global)
 }
 
 func BenchmarkStdString2ByteSlice(b *testing.B) {
@@ -317,19 +319,19 @@ func BenchmarkStdString2ByteSlice(b *testing.B) {
 	}
 
 	b.StopTimer()
-	runtime.KeepAlive(b)
+	runtime.KeepAlive(qs) // just as an example, not really required in this case (qs is global)
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
 func TestSplit(t *testing.T) {
-	b := []byte("1234567890,1234567890,1234567890,1234567890,1234567890,1234567890,1234567890,1234567890,1234567890,1234567890,1234567890")
-	s := UnsafeByteSlice2String(b)
+	bb := []byte("1234567890,1234567890,1234567890,1234567890,1234567890,1234567890,1234567890,1234567890,1234567890,1234567890,1234567890")
+	s := UnsafeByteSlice2String(bb)
 
 	ss := strings.Split(s, ",")
 	ss2 := strings.Split(ss[1], "5")
 
-	b[13] = '!'
+	bb[13] = '!'
 
 	//fmt.Printf("%s\n%s\n%s\n", s, ss[1], ss2[0])
 	expected := "12!4"
@@ -337,7 +339,7 @@ func TestSplit(t *testing.T) {
 		t.Fatalf(`got "%s", expected "%s"`, ss[0], expected)
 	}
 
-	runtime.KeepAlive(b)
+	runtime.KeepAlive(bb)
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
