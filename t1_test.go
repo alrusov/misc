@@ -343,3 +343,143 @@ func TestSplit(t *testing.T) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
+
+func TestJoinByteSlices(t *testing.T) {
+	testJoin(t,
+		func(p testJoinBlock) string {
+			list := make([][]byte, len(p.list))
+			for i, v := range p.list {
+				list[i] = []byte(v)
+			}
+			return string(JoinByteSlices([]byte(p.prefix), []byte(p.suffix), []byte(p.sep), list))
+		},
+	)
+}
+
+func BenchmarkJoinByteSlices(b *testing.B) {
+	prefix := []byte(testJoinPrefix)
+	suffix := []byte(testJoinSuffix)
+	sep := []byte(testJoinSeparator)
+
+	list := make([][]byte, len(testJoinList))
+	for i, v := range testJoinList {
+		list[i] = []byte(v)
+	}
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_ = JoinByteSlices(prefix, suffix, sep, list)
+	}
+
+	b.StopTimer()
+}
+
+func BenchmarkJoinByteSlicesStd(b *testing.B) {
+	prefix := []byte(testJoinPrefix)
+	suffix := []byte(testJoinSuffix)
+	sep := []byte(testJoinSeparator)
+
+	list := make([][]byte, len(testJoinList))
+	for i, v := range testJoinList {
+		list[i] = []byte(v)
+	}
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		b := prefix
+		b = append(b, bytes.Join(list, sep)...)
+		b = append(b, suffix...)
+	}
+
+	b.StopTimer()
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+func TestJoinStrings(t *testing.T) {
+	testJoin(t,
+		func(p testJoinBlock) string {
+			return JoinStrings(p.prefix, p.suffix, p.sep, p.list)
+		},
+	)
+}
+
+func BenchmarkJoinString(b *testing.B) {
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_ = JoinStrings(testJoinPrefix, testJoinSuffix, testJoinSeparator, testJoinList)
+	}
+
+	b.StopTimer()
+}
+
+func BenchmarkJoinStringStd(b *testing.B) {
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_ = strings.Join([]string{testJoinPrefix, strings.Join(testJoinList, testJoinSeparator), testJoinSuffix}, "")
+	}
+
+	b.StopTimer()
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+type (
+	testJoinBlock struct {
+		prefix   string
+		suffix   string
+		sep      string
+		list     []string
+		expected string
+	}
+)
+
+var (
+	testJoinPrefix    = "AAABBBCCC!{"
+	testJoinSuffix    = "}!ZZZ"
+	testJoinSeparator = "},{"
+	testJoinList      = []string{
+		"1234567890",
+		"qwertyuiop[]",
+		"asdfghjkl;'?|",
+		"zxcvb",
+		"",
+		"/.,mnbv",
+	}
+)
+
+func testJoin(t *testing.T, f func(b testJoinBlock) string) {
+	data := []testJoinBlock{
+		{"", "", "", []string{}, ""},
+		{"A", "", ",,,", []string{}, "A"},
+		{"", "BB", ",,,", []string{}, "BB"},
+		{"A", "BB", ",,,", []string{}, "ABB"},
+		{"", "", ",,,", []string{"1"}, "1"},
+		{"A", "", ",,,", []string{"1"}, "A1"},
+		{"", "BB", ",,,", []string{"1"}, "1BB"},
+		{"A", "BB", ",,,", []string{"1"}, "A1BB"},
+		{"", "", ",,,", []string{"1", "22", "333"}, "1,,,22,,,333"},
+		{"A", "", ",,,", []string{"1", "22", "333"}, "A1,,,22,,,333"},
+		{"", "BB", ",,,", []string{"1", "22", "333"}, "1,,,22,,,333BB"},
+		{"A", "BB", ",,,", []string{"1", "22", "333"}, "A1,,,22,,,333BB"},
+		{"A", "BB", ",,,", []string{"1", "22", "", "", "333"}, "A1,,,22,,,,,,,,,333BB"},
+		{"", "", "", []string{"1", "22", "333"}, "122333"},
+		{"A", "", "", []string{"1", "22", "333"}, "A122333"},
+		{"", "BB", "", []string{"1", "22", "333"}, "122333BB"},
+		{"A", "BB", "", []string{"1", "22", "333"}, "A122333BB"},
+		{"A", "BB", "", []string{"1", "22", "", "", "333"}, "A122333BB"},
+	}
+
+	for i, p := range data {
+		s := f(p)
+		if s != p.expected {
+			t.Errorf(`[%d] got "%s", expected "%s"`, i, s, p.expected)
+		}
+	}
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//

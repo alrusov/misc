@@ -617,3 +617,78 @@ func UnsafeString2ByteSlice(s string) []byte {
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
+
+func JoinByteSlices(prefix []byte, suffix []byte, sep []byte, in [][]byte) (out []byte) {
+	inCount := len(in)
+	ln := len(prefix) + len(suffix)
+
+	if inCount == 0 {
+		if ln == 0 {
+			return []byte{}
+		}
+
+		out = make([]byte, ln)
+		pos := copy(out, prefix)
+		copy(out[pos:], suffix)
+		return
+	}
+
+	ln += len(sep) * (inCount - 1)
+
+	for _, v := range in {
+		ln += len(v)
+	}
+
+	out = make([]byte, ln)
+	pos := copy(out, prefix)
+	pos += copy(out[pos:], in[0])
+
+	if inCount > 1 {
+		for _, v := range in[1:] {
+			pos += copy(out[pos:], sep)
+			pos += copy(out[pos:], v)
+		}
+	}
+
+	copy(out[pos:], suffix)
+
+	return
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+func JoinStrings(prefix string, suffix string, sep string, in []string) (out string) {
+	inCount := len(in)
+	ln := len(prefix) + len(suffix)
+
+	if inCount == 0 && ln == 0 {
+		return ""
+	}
+
+	if inCount > 0 {
+		ln += len(sep) * (inCount - 1)
+
+		for _, v := range in {
+			ln += len(v)
+		}
+	}
+
+	var b strings.Builder
+	b.Grow(ln)
+
+	b.WriteString(prefix)
+
+	if inCount > 0 {
+		b.WriteString(in[0])
+		for _, v := range in[1:] {
+			b.WriteString(sep)
+			b.WriteString(v)
+		}
+	}
+
+	b.WriteString(suffix)
+
+	return b.String()
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
