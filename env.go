@@ -52,7 +52,7 @@ func LoadEnv(fileName string) (e error) {
 		}
 
 		if k == "" {
-			if strings.Index(s, "=") < 0 {
+			if !strings.Contains(s, "=") {
 				msg = "Bad format"
 				return
 			}

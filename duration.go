@@ -45,12 +45,12 @@ func Interval2Int64(interval string) (int64, error) {
 	}
 
 	if !matchRE.MatchString(interval) {
-		return 0, fmt.Errorf(`Bad interval "%s"`, interval)
+		return 0, fmt.Errorf(`bad interval "%s"`, interval)
 	}
 
 	v := intervalRE.FindAllStringSubmatch(strings.TrimSpace(interval), -1)
 	if v == nil {
-		return 0, fmt.Errorf(`Bad interval "%s"`, interval)
+		return 0, fmt.Errorf(`bad interval "%s"`, interval)
 	}
 
 	val := int64(0)
@@ -84,7 +84,7 @@ func TimePrecisionDivider(precision string, upToSecond bool) (int64, error) {
 		return d, nil
 	}
 
-	return 1, fmt.Errorf(`Unknown precision "%s"`, precision)
+	return 1, fmt.Errorf(`unknown precision "%s"`, precision)
 }
 
 // CheckTimePrecision --

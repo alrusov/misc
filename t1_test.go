@@ -390,7 +390,7 @@ func BenchmarkJoinByteSlicesStd(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		b := prefix
 		b = append(b, bytes.Join(list, sep)...)
-		b = append(b, suffix...)
+		_ = append(b, suffix...)
 	}
 
 	b.StopTimer()
