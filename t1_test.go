@@ -100,6 +100,8 @@ func TestAbsPath(t *testing.T) {
 	switch runtime.GOOS {
 	case "windows":
 		smp = []samples{
+			{``, appExecPath},
+			{`@`, appWorkDir},
 			{`c:/qqq/www\eee`, `c:\qqq\www\eee`},
 			{`qqq/www/eee`, appExecPath + `\qqq\www\eee`},
 			{`\qqq\www\eee`, appExecPath + `\qqq\www\eee`},
@@ -107,6 +109,8 @@ func TestAbsPath(t *testing.T) {
 		}
 	case "linux":
 		smp = []samples{
+			{``, appExecPath},
+			{`@`, appWorkDir},
 			{`/qqq/www/eee`, `/qqq/www/eee`},
 			{`qqq/www/eee`, appExecPath + `/qqq/www/eee`},
 			{`@qqq/www/eee`, appWorkDir + `/qqq/www/eee`},
