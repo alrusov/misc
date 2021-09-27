@@ -11,6 +11,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"runtime"
 	"strconv"
@@ -595,33 +596,28 @@ func Sha512Hash(p []byte) []byte {
 // UnsafeByteSlice2String -- fast convert []byte to string without memory allocs
 // Don't forget to use runtime.KeepAlive(b) in the caller if necessary!
 func UnsafeByteSlice2String(b []byte) string {
-	/*
-		h := (*reflect.SliceHeader)(unsafe.Pointer(&b))
-		s := reflect.StringHeader{
-			Data: h.Data,
-			Len:  h.Len,
-		}
+	//return *((*string)(unsafe.Pointer(&b)))
+	h := (*reflect.SliceHeader)(unsafe.Pointer(&b))
+	s := reflect.StringHeader{
+		Data: h.Data,
+		Len:  h.Len,
+	}
 
-		return *(*string)(unsafe.Pointer(&s))
-	*/
-	return *((*string)(unsafe.Pointer(&b)))
+	return *(*string)(unsafe.Pointer(&s))
 }
 
 // UnsafeString2ByteSlice -- fast convert string to []byte without memory allocs
 // Don't forget to use runtime.KeepAlive(s) in the caller if necessary!
 // Don't try to change result without thinking hard before that!
 func UnsafeString2ByteSlice(s string) []byte {
-	/*
-		h := (*reflect.StringHeader)(unsafe.Pointer(&s))
-		b := reflect.SliceHeader{
-			Data: h.Data,
-			Len:  h.Len,
-			Cap:  h.Len,
-		}
-
-		return *(*[]byte)(unsafe.Pointer(&b))
-	*/
-	return *((*[]byte)(unsafe.Pointer(&s)))
+	//return *((*[]byte)(unsafe.Pointer(&s)))
+	h := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	b := reflect.SliceHeader{
+		Data: h.Data,
+		Len:  h.Len,
+		Cap:  h.Len,
+	}
+	return *(*[]byte)(unsafe.Pointer(&b))
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
