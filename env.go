@@ -9,15 +9,23 @@ import (
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
+const (
+	DefaultEnvFile = ".env"
+)
+
 // LoadEnv --
 func LoadEnv(fileName string) (e error) {
 	if fileName == "" {
-		fileName = ".env"
+		fileName = DefaultEnvFile
 	}
 
 	f, err := os.OpenFile(fileName, os.O_RDONLY, 0)
 	if err != nil {
-		return err
+		if fileName != DefaultEnvFile {
+			return err
+		}
+
+		return nil
 	}
 
 	n := 0
