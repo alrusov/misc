@@ -113,13 +113,32 @@ type (
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
+var (
+	terminationTimeout = 5 * time.Second
+	killingTimeout     = 5 * time.Second
+)
+
+func SetExitTimeouts(newTerminationTimeout time.Duration, newKillingTimeout time.Duration) (prevTerminationTimeout time.Duration, prevKillingTimeout time.Duration) {
+	prevTerminationTimeout, prevKillingTimeout = terminationTimeout, killingTimeout
+
+	if newTerminationTimeout > 0 {
+		terminationTimeout = newTerminationTimeout
+	}
+
+	if newKillingTimeout > 0 {
+		killingTimeout = newKillingTimeout
+	}
+
+	return
+}
+
 func killer() {
-	time.Sleep(5000 * time.Millisecond)
-	Logger("", "CR", "Application shutdown timeout. Forced completion.")
+	time.Sleep(terminationTimeout)
+	Logger("", "CR", "Application shutdown timeout. Force termination.")
 	go Exit()
 
-	time.Sleep(5000 * time.Millisecond)
-	Logger("", "CR", "Application forced completion timeout. Forced Killing.")
+	time.Sleep(killingTimeout)
+	Logger("", "CR", "Application termination timeout. Force killing.")
 	os.Exit(exitCode)
 }
 

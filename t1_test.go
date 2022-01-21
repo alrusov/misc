@@ -83,7 +83,7 @@ func TestNormalizeSlashes(t *testing.T) {
 		i++
 		out := NormalizeSlashes(p.in)
 		if out != p.out {
-			t.Errorf(`Case %d failed: in "%s", out "%s", expected: "%s"`, i, p.in, out, p.out)
+			t.Errorf(`Case %d failed: in "%s", got "%s", expected "%s"`, i, p.in, out, p.out)
 		}
 	}
 }
@@ -125,7 +125,7 @@ func TestAbsPath(t *testing.T) {
 			continue
 		}
 		if out != p.out {
-			t.Errorf(`Case %d failed: in "%s", out "%s", expected: "%s"`, i, p.in, out, p.out)
+			t.Errorf(`Case %d failed: in "%s", got "%s", expected: "%s"`, i, p.in, out, p.out)
 		}
 	}
 }

@@ -172,7 +172,7 @@ func Iface2Float(x interface{}) (v float64, err error) {
 		v, err = strconv.ParseFloat(x, 64)
 		return
 	default:
-		err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, float64(0))
+		err = fmt.Errorf(`illegal type of the "%#v" - "%T", "%T" expected`, x, x, float64(0))
 		return
 	}
 }
@@ -208,7 +208,7 @@ func Iface2Int(x interface{}) (v int64, err error) {
 		v, err = strconv.ParseInt(x, 10, 64)
 		return
 	default:
-		err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, int64(0))
+		err = fmt.Errorf(`illegal type of the "%#v" - "%T", "%T" expected`, x, x, int64(0))
 		return
 	}
 }
@@ -252,7 +252,7 @@ func Iface2Uint(x interface{}) (v uint64, err error) {
 		v, err = strconv.ParseUint(x, 10, 64)
 		return
 	default:
-		err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, int64(0))
+		err = fmt.Errorf(`illegal type of the "%#v" - "%T", "%T" expected`, x, x, int64(0))
 		return
 	}
 }
@@ -288,7 +288,7 @@ func Iface2String(x interface{}) (v string, err error) {
 		v = strconv.FormatUint(x, 10)
 		return
 	default:
-		err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, "")
+		err = fmt.Errorf(`illegal type of the "%#v" - "%T", "%T" expected`, x, x, "")
 		return
 	}
 }
@@ -331,7 +331,7 @@ func Iface2Bool(x interface{}) (v bool, err error) {
 		}
 		return
 	default:
-		err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, int64(0))
+		err = fmt.Errorf(`illegal type of the "%#v" - "%T", "%T" expected`, x, x, int64(0))
 		return
 	}
 }
