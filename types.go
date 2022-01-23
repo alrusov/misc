@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 )
@@ -334,6 +335,60 @@ func Iface2Bool(x interface{}) (v bool, err error) {
 		err = fmt.Errorf(`illegal type of the "%#v" - "%T", "%T" expected`, x, x, int64(0))
 		return
 	}
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+func Iface2IfacePtr(src interface{}, dstPtr interface{}) (err error) {
+	v := reflect.ValueOf(dstPtr)
+	if v.Kind() != reflect.Ptr {
+		return fmt.Errorf(`"%v" is not a pointer`, dstPtr)
+	}
+
+	e := v.Elem()
+	var vv interface{}
+
+	switch e.Kind() {
+	case reflect.Bool:
+		vv, err = Iface2Bool(src)
+		if err != nil {
+			return
+		}
+		e.SetBool(vv.(bool))
+
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		vv, err = Iface2Int(src)
+		if err != nil {
+			return
+		}
+		e.SetInt(vv.(int64))
+
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		vv, err = Iface2Uint(src)
+		if err != nil {
+			return
+		}
+		e.SetUint(vv.(uint64))
+
+	case reflect.Float32, reflect.Float64:
+		vv, err = Iface2Float(src)
+		if err != nil {
+			return
+		}
+		e.SetFloat(vv.(float64))
+
+	case reflect.String:
+		vv, err = Iface2String(src)
+		if err != nil {
+			return
+		}
+		e.SetString(vv.(string))
+
+	default:
+		err = fmt.Errorf(`unsupported kind "%s"`, e.Kind())
+	}
+
+	return
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
