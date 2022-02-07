@@ -30,11 +30,12 @@ func LoadEnv(fileName string) (e error) {
 
 	n := 0
 	msg := ""
+	src := ""
 
 	defer func() {
 		f.Close()
 		if msg != "" {
-			e = fmt.Errorf("%s in line %d", msg, n)
+			e = fmt.Errorf("%s in line %d (%s)", msg, n, strings.TrimSpace(src))
 		}
 	}()
 
@@ -45,15 +46,15 @@ func LoadEnv(fileName string) (e error) {
 	v := ""
 
 	for {
-		s, err := fb.ReadString(eos)
+		src, err = fb.ReadString(eos)
 		if err != nil {
 			return nil
 		}
 
 		n++
 
-		s = strings.TrimSpace(
-			strings.Split(s, "#")[0],
+		s := strings.TrimSpace(
+			strings.Split(src, "#")[0],
 		)
 		if s == "" {
 			continue
@@ -86,7 +87,10 @@ func LoadEnv(fileName string) (e error) {
 				ln = len(v)
 			}
 
-			if ln > 0 && v[0] == '(' && v[ln-1] != ')' {
+			if ln > 0 &&
+				(v[0] == '(' ||
+					(len(v) > 1 && v[0] == '$' && v[1] == '(')) &&
+				v[ln-1] != ')' {
 				continue
 			}
 
