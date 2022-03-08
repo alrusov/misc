@@ -111,6 +111,10 @@ type (
 	loggerFunc func(facility string, level string, message string, params ...interface{})
 )
 
+type (
+	CtxKey string
+)
+
 //----------------------------------------------------------------------------------------------------------------------------//
 
 var (
