@@ -89,9 +89,9 @@ var (
 
 	exitCode = 0
 
-	sleepInterrupt = make(chan bool, 1)
+	sleepInterrupted = make(chan bool, 1)
 
-	cond      *sync.Cond
+	exitCond  = sync.NewCond(new(sync.Mutex))
 	exitChain = make([]exitElement, 0)
 
 	// Logger --
@@ -153,13 +153,12 @@ func StopApp(code int) {
 
 		exitCode = code
 
-		cond.Broadcast()
-		time.Sleep(100 * time.Millisecond)
+		exitCond.Broadcast()
 
 		ex := false
 		for !ex {
 			select {
-			case sleepInterrupt <- true:
+			case sleepInterrupted <- true:
 			default:
 				ex = true
 			}
@@ -173,9 +172,21 @@ func StopApp(code int) {
 
 // WaitingForStop --
 func WaitingForStop() {
-	cond.L.Lock()
-	cond.Wait()
-	cond.L.Unlock()
+	exitCond.L.Lock()
+	exitCond.Wait()
+	exitCond.L.Unlock()
+}
+
+// WaitingForStopChan --
+func WaitingForStopChan() <-chan time.Time {
+	c := make(chan time.Time)
+
+	go func() {
+		WaitingForStop()
+		c <- NowUTC()
+	}()
+
+	return c
 }
 
 // Exit -- exit application
@@ -227,8 +238,6 @@ func init() {
 	startTime = NowUTC()
 
 	Logger = simpleLogger
-
-	cond = sync.NewCond(new(sync.Mutex))
 
 	go signalHandler()
 
@@ -423,7 +432,7 @@ func Sleep(duration time.Duration) bool {
 	}
 
 	select {
-	case <-sleepInterrupt:
+	case <-sleepInterrupted:
 		return false
 	case <-time.After(duration):
 		return true
