@@ -233,7 +233,7 @@ func TestInterval2Int64(t *testing.T) {
 		result, err := Interval2Int64(df.src)
 		if df.isError {
 			if err == nil {
-				t.Errorf(`[%d] "%s": has no error, but error expected`, i+1, df.src)
+				t.Errorf(`[%d] "%s": has no error, expected error`, i+1, df.src)
 			}
 			continue
 		}

@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 )
 
 //----------------------------------------------------------------------------------------------------------------------------//
@@ -140,6 +141,23 @@ func (m InterfaceMap) GetBool(name string) (v bool, err error) {
 	return
 }
 
+// GetTime --
+func (m InterfaceMap) GetTime(name string) (v time.Time, err error) {
+	x, exists := m[name]
+	if !exists {
+		err = fmt.Errorf(`%s: parameter not found`, name)
+		return
+	}
+
+	v, err = Iface2Time(x)
+	if err != nil {
+		err = fmt.Errorf("%s: %s", name, err.Error())
+		return
+	}
+
+	return
+}
+
 //----------------------------------------------------------------------------------------------------------------------------//
 
 // Iface2Float --
@@ -154,6 +172,9 @@ func Iface2Float(x interface{}) (v float64, err error) {
 	case int:
 		v = float64(x)
 		return
+	case int8:
+		v = float64(x)
+		return
 	case int32:
 		v = float64(x)
 		return
@@ -161,6 +182,9 @@ func Iface2Float(x interface{}) (v float64, err error) {
 		v = float64(x)
 		return
 	case uint:
+		v = float64(x)
+		return
+	case uint8:
 		v = float64(x)
 		return
 	case uint32:
@@ -173,7 +197,7 @@ func Iface2Float(x interface{}) (v float64, err error) {
 		v, err = strconv.ParseFloat(x, 64)
 		return
 	default:
-		err = fmt.Errorf(`illegal type of the "%#v" - "%T", "%T" expected`, x, x, float64(0))
+		err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, v)
 		return
 	}
 }
@@ -190,6 +214,9 @@ func Iface2Int(x interface{}) (v int64, err error) {
 	case int:
 		v = int64(x)
 		return
+	case int8:
+		v = int64(x)
+		return
 	case int32:
 		v = int64(x)
 		return
@@ -197,6 +224,9 @@ func Iface2Int(x interface{}) (v int64, err error) {
 		v = x
 		return
 	case uint:
+		v = int64(x)
+		return
+	case uint8:
 		v = int64(x)
 		return
 	case uint32:
@@ -209,7 +239,7 @@ func Iface2Int(x interface{}) (v int64, err error) {
 		v, err = strconv.ParseInt(x, 10, 64)
 		return
 	default:
-		err = fmt.Errorf(`illegal type of the "%#v" - "%T", "%T" expected`, x, x, int64(0))
+		err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, v)
 		return
 	}
 }
@@ -234,6 +264,9 @@ func Iface2Uint(x interface{}) (v uint64, err error) {
 	case int:
 		v = uint64(x)
 		return
+	case int8:
+		v = uint64(x)
+		return
 	case int32:
 		v = uint64(x)
 		return
@@ -241,6 +274,9 @@ func Iface2Uint(x interface{}) (v uint64, err error) {
 		v = uint64(x)
 		return
 	case uint:
+		v = uint64(x)
+		return
+	case uint8:
 		v = uint64(x)
 		return
 	case uint32:
@@ -253,7 +289,7 @@ func Iface2Uint(x interface{}) (v uint64, err error) {
 		v, err = strconv.ParseUint(x, 10, 64)
 		return
 	default:
-		err = fmt.Errorf(`illegal type of the "%#v" - "%T", "%T" expected`, x, x, int64(0))
+		err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, v)
 		return
 	}
 }
@@ -270,6 +306,9 @@ func Iface2String(x interface{}) (v string, err error) {
 	case int:
 		v = strconv.FormatInt(int64(x), 10)
 		return
+	case int8:
+		v = strconv.FormatInt(int64(x), 10)
+		return
 	case int32:
 		v = strconv.FormatInt(int64(x), 10)
 		return
@@ -282,6 +321,9 @@ func Iface2String(x interface{}) (v string, err error) {
 	case uint:
 		v = strconv.FormatUint(uint64(x), 10)
 		return
+	case uint8:
+		v = strconv.FormatUint(uint64(x), 10)
+		return
 	case uint32:
 		v = strconv.FormatUint(uint64(x), 10)
 		return
@@ -289,7 +331,7 @@ func Iface2String(x interface{}) (v string, err error) {
 		v = strconv.FormatUint(x, 10)
 		return
 	default:
-		err = fmt.Errorf(`illegal type of the "%#v" - "%T", "%T" expected`, x, x, "")
+		err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, v)
 		return
 	}
 }
@@ -309,6 +351,9 @@ func Iface2Bool(x interface{}) (v bool, err error) {
 	case int:
 		v = x != 0
 		return
+	case int8:
+		v = x != 0
+		return
 	case int32:
 		v = x != 0
 		return
@@ -316,6 +361,9 @@ func Iface2Bool(x interface{}) (v bool, err error) {
 		v = x != 0
 		return
 	case uint:
+		v = x != 0
+		return
+	case uint8:
 		v = x != 0
 		return
 	case uint32:
@@ -332,7 +380,52 @@ func Iface2Bool(x interface{}) (v bool, err error) {
 		}
 		return
 	default:
-		err = fmt.Errorf(`illegal type of the "%#v" - "%T", "%T" expected`, x, x, int64(0))
+		err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, v)
+		return
+	}
+}
+
+// Iface2Time --
+func Iface2Time(x interface{}) (v time.Time, err error) {
+	switch x := x.(type) {
+	case time.Time:
+		v = x
+		return
+	case float32:
+		v = UnixNano2UTC(int64(x))
+		return
+	case float64:
+		v = UnixNano2UTC(int64(x))
+		return
+	case int:
+		v = UnixNano2UTC(int64(x))
+		return
+	case int8:
+		v = UnixNano2UTC(int64(x))
+		return
+	case int32:
+		v = UnixNano2UTC(int64(x))
+		return
+	case int64:
+		v = UnixNano2UTC(x)
+		return
+	case uint:
+		v = UnixNano2UTC(int64(x))
+		return
+	case uint8:
+		v = UnixNano2UTC(int64(x))
+		return
+	case uint32:
+		v = UnixNano2UTC(int64(x))
+		return
+	case uint64:
+		v = UnixNano2UTC(int64(x))
+		return
+	case string:
+		v, err = ParseJSONtime(x)
+		return
+	default:
+		err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, v)
 		return
 	}
 }
