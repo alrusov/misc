@@ -175,6 +175,9 @@ func Iface2Float(x interface{}) (v float64, err error) {
 	case int8:
 		v = float64(x)
 		return
+	case int16:
+		v = float64(x)
+		return
 	case int32:
 		v = float64(x)
 		return
@@ -185,6 +188,9 @@ func Iface2Float(x interface{}) (v float64, err error) {
 		v = float64(x)
 		return
 	case uint8:
+		v = float64(x)
+		return
+	case uint16:
 		v = float64(x)
 		return
 	case uint32:
@@ -217,6 +223,9 @@ func Iface2Int(x interface{}) (v int64, err error) {
 	case int8:
 		v = int64(x)
 		return
+	case int16:
+		v = int64(x)
+		return
 	case int32:
 		v = int64(x)
 		return
@@ -227,6 +236,9 @@ func Iface2Int(x interface{}) (v int64, err error) {
 		v = int64(x)
 		return
 	case uint8:
+		v = int64(x)
+		return
+	case uint16:
 		v = int64(x)
 		return
 	case uint32:
@@ -267,6 +279,9 @@ func Iface2Uint(x interface{}) (v uint64, err error) {
 	case int8:
 		v = uint64(x)
 		return
+	case int16:
+		v = uint64(x)
+		return
 	case int32:
 		v = uint64(x)
 		return
@@ -277,6 +292,9 @@ func Iface2Uint(x interface{}) (v uint64, err error) {
 		v = uint64(x)
 		return
 	case uint8:
+		v = uint64(x)
+		return
+	case uint16:
 		v = uint64(x)
 		return
 	case uint32:
@@ -309,6 +327,9 @@ func Iface2String(x interface{}) (v string, err error) {
 	case int8:
 		v = strconv.FormatInt(int64(x), 10)
 		return
+	case int16:
+		v = strconv.FormatInt(int64(x), 10)
+		return
 	case int32:
 		v = strconv.FormatInt(int64(x), 10)
 		return
@@ -322,6 +343,9 @@ func Iface2String(x interface{}) (v string, err error) {
 		v = strconv.FormatUint(uint64(x), 10)
 		return
 	case uint8:
+		v = strconv.FormatUint(uint64(x), 10)
+		return
+	case uint16:
 		v = strconv.FormatUint(uint64(x), 10)
 		return
 	case uint32:
@@ -354,6 +378,9 @@ func Iface2Bool(x interface{}) (v bool, err error) {
 	case int8:
 		v = x != 0
 		return
+	case int16:
+		v = x != 0
+		return
 	case int32:
 		v = x != 0
 		return
@@ -364,6 +391,9 @@ func Iface2Bool(x interface{}) (v bool, err error) {
 		v = x != 0
 		return
 	case uint8:
+		v = x != 0
+		return
+	case uint16:
 		v = x != 0
 		return
 	case uint32:
@@ -403,6 +433,9 @@ func Iface2Time(x interface{}) (v time.Time, err error) {
 	case int8:
 		v = UnixNano2UTC(int64(x))
 		return
+	case int16:
+		v = UnixNano2UTC(int64(x))
+		return
 	case int32:
 		v = UnixNano2UTC(int64(x))
 		return
@@ -413,6 +446,9 @@ func Iface2Time(x interface{}) (v time.Time, err error) {
 		v = UnixNano2UTC(int64(x))
 		return
 	case uint8:
+		v = UnixNano2UTC(int64(x))
+		return
+	case uint16:
 		v = UnixNano2UTC(int64(x))
 		return
 	case uint32:
