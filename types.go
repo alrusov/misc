@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -162,46 +161,33 @@ func (m InterfaceMap) GetTime(name string) (v time.Time, err error) {
 
 // Iface2Float --
 func Iface2Float(x interface{}) (v float64, err error) {
-	switch x := x.(type) {
-	case float32:
-		v = float64(x)
+	vv := reflect.ValueOf(x)
+
+	switch vv.Kind() {
+	case reflect.Float32, reflect.Float64:
+		v = vv.Float()
 		return
-	case float64:
-		v = x
+
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		v = float64(vv.Int())
 		return
-	case int:
-		v = float64(x)
+
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		v = float64(vv.Uint())
 		return
-	case int8:
-		v = float64(x)
+
+	case reflect.String:
+		v, err = strconv.ParseFloat(vv.String(), 64)
 		return
-	case int16:
-		v = float64(x)
+
+	case reflect.Bool:
+		if vv.Bool() {
+			v = 1.
+		} else {
+			v = 0.
+		}
 		return
-	case int32:
-		v = float64(x)
-		return
-	case int64:
-		v = float64(x)
-		return
-	case uint:
-		v = float64(x)
-		return
-	case uint8:
-		v = float64(x)
-		return
-	case uint16:
-		v = float64(x)
-		return
-	case uint32:
-		v = float64(x)
-		return
-	case uint64:
-		v = float64(x)
-		return
-	case string:
-		v, err = strconv.ParseFloat(x, 64)
-		return
+
 	default:
 		err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, v)
 		return
@@ -210,46 +196,33 @@ func Iface2Float(x interface{}) (v float64, err error) {
 
 // Iface2Int --
 func Iface2Int(x interface{}) (v int64, err error) {
-	switch x := x.(type) {
-	case float32:
-		v = int64(x)
+	vv := reflect.ValueOf(x)
+
+	switch vv.Kind() {
+	case reflect.Float32, reflect.Float64:
+		v = int64(vv.Float())
 		return
-	case float64:
-		v = int64(x)
+
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		v = vv.Int()
 		return
-	case int:
-		v = int64(x)
+
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		v = int64(vv.Uint())
 		return
-	case int8:
-		v = int64(x)
+
+	case reflect.String:
+		v, err = strconv.ParseInt(vv.String(), 10, 64)
 		return
-	case int16:
-		v = int64(x)
+
+	case reflect.Bool:
+		if vv.Bool() {
+			v = 1
+		} else {
+			v = 0
+		}
 		return
-	case int32:
-		v = int64(x)
-		return
-	case int64:
-		v = x
-		return
-	case uint:
-		v = int64(x)
-		return
-	case uint8:
-		v = int64(x)
-		return
-	case uint16:
-		v = int64(x)
-		return
-	case uint32:
-		v = int64(x)
-		return
-	case uint64:
-		v = int64(x)
-		return
-	case string:
-		v, err = strconv.ParseInt(x, 10, 64)
-		return
+
 	default:
 		err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, v)
 		return
@@ -258,54 +231,33 @@ func Iface2Int(x interface{}) (v int64, err error) {
 
 // Iface2Uint --
 func Iface2Uint(x interface{}) (v uint64, err error) {
-	switch x := x.(type) {
-	case float32:
-		xx := x
-		if xx < 0 {
-			err = fmt.Errorf("negative value: %f", xx)
+	vv := reflect.ValueOf(x)
+
+	switch vv.Kind() {
+	case reflect.Float32, reflect.Float64:
+		v = uint64(vv.Float())
+		return
+
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		v = uint64(vv.Int())
+		return
+
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		v = vv.Uint()
+		return
+
+	case reflect.String:
+		v, err = strconv.ParseUint(vv.String(), 10, 64)
+		return
+
+	case reflect.Bool:
+		if vv.Bool() {
+			v = 1
+		} else {
+			v = 0
 		}
-		v = uint64(xx)
 		return
-	case float64:
-		xx := x
-		if xx < 0 {
-			err = fmt.Errorf("negative value: %f", xx)
-		}
-		v = uint64(xx)
-		return
-	case int:
-		v = uint64(x)
-		return
-	case int8:
-		v = uint64(x)
-		return
-	case int16:
-		v = uint64(x)
-		return
-	case int32:
-		v = uint64(x)
-		return
-	case int64:
-		v = uint64(x)
-		return
-	case uint:
-		v = uint64(x)
-		return
-	case uint8:
-		v = uint64(x)
-		return
-	case uint16:
-		v = uint64(x)
-		return
-	case uint32:
-		v = uint64(x)
-		return
-	case uint64:
-		v = x
-		return
-	case string:
-		v, err = strconv.ParseUint(x, 10, 64)
-		return
+
 	default:
 		err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, v)
 		return
@@ -314,46 +266,29 @@ func Iface2Uint(x interface{}) (v uint64, err error) {
 
 // Iface2String --
 func Iface2String(x interface{}) (v string, err error) {
-	switch x := x.(type) {
-	case float32:
-		v = strconv.FormatFloat(float64(x), 'g', 5, 64)
+	vv := reflect.ValueOf(x)
+
+	switch vv.Kind() {
+	case reflect.Float32, reflect.Float64:
+		v = strconv.FormatFloat(vv.Float(), 'g', 5, 64)
 		return
-	case float64:
-		v = strconv.FormatFloat(x, 'g', 5, 64)
+
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		v = strconv.FormatInt(vv.Int(), 10)
 		return
-	case int:
-		v = strconv.FormatInt(int64(x), 10)
+
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		v = strconv.FormatUint(vv.Uint(), 10)
 		return
-	case int8:
-		v = strconv.FormatInt(int64(x), 10)
+
+	case reflect.String:
+		v = vv.String()
 		return
-	case int16:
-		v = strconv.FormatInt(int64(x), 10)
+
+	case reflect.Bool:
+		v = strconv.FormatBool(vv.Bool())
 		return
-	case int32:
-		v = strconv.FormatInt(int64(x), 10)
-		return
-	case int64:
-		v = strconv.FormatInt(x, 10)
-		return
-	case string:
-		v = x
-		return
-	case uint:
-		v = strconv.FormatUint(uint64(x), 10)
-		return
-	case uint8:
-		v = strconv.FormatUint(uint64(x), 10)
-		return
-	case uint16:
-		v = strconv.FormatUint(uint64(x), 10)
-		return
-	case uint32:
-		v = strconv.FormatUint(uint64(x), 10)
-		return
-	case uint64:
-		v = strconv.FormatUint(x, 10)
-		return
+
 	default:
 		err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, v)
 		return
@@ -362,53 +297,29 @@ func Iface2String(x interface{}) (v string, err error) {
 
 // Iface2Bool --
 func Iface2Bool(x interface{}) (v bool, err error) {
-	switch x := x.(type) {
-	case bool:
-		v = x
+	vv := reflect.ValueOf(x)
+
+	switch vv.Kind() {
+	case reflect.Float32, reflect.Float64:
+		v = int(vv.Float()) != 0
 		return
-	case float32:
-		v = int64(x) != 0
+
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		v = vv.Int() != 0
 		return
-	case float64:
-		v = int64(x) != 0
+
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		v = vv.Uint() != 0
 		return
-	case int:
-		v = x != 0
+
+	case reflect.String:
+		v, err = strconv.ParseBool(vv.String())
 		return
-	case int8:
-		v = x != 0
+
+	case reflect.Bool:
+		v = vv.Bool()
 		return
-	case int16:
-		v = x != 0
-		return
-	case int32:
-		v = x != 0
-		return
-	case int64:
-		v = x != 0
-		return
-	case uint:
-		v = x != 0
-		return
-	case uint8:
-		v = x != 0
-		return
-	case uint16:
-		v = x != 0
-		return
-	case uint32:
-		v = x != 0
-		return
-	case uint64:
-		v = x != 0
-		return
-	case string:
-		v = false
-		switch strings.ToLower(x) {
-		case "true", "t", "1":
-			v = true
-		}
-		return
+
 	default:
 		err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, v)
 		return
@@ -421,47 +332,19 @@ func Iface2Time(x interface{}) (v time.Time, err error) {
 	case time.Time:
 		v = x
 		return
-	case float32:
-		v = UnixNano2UTC(int64(x))
-		return
-	case float64:
-		v = UnixNano2UTC(int64(x))
-		return
-	case int:
-		v = UnixNano2UTC(int64(x))
-		return
-	case int8:
-		v = UnixNano2UTC(int64(x))
-		return
-	case int16:
-		v = UnixNano2UTC(int64(x))
-		return
-	case int32:
-		v = UnixNano2UTC(int64(x))
-		return
-	case int64:
-		v = UnixNano2UTC(x)
-		return
-	case uint:
-		v = UnixNano2UTC(int64(x))
-		return
-	case uint8:
-		v = UnixNano2UTC(int64(x))
-		return
-	case uint16:
-		v = UnixNano2UTC(int64(x))
-		return
-	case uint32:
-		v = UnixNano2UTC(int64(x))
-		return
-	case uint64:
-		v = UnixNano2UTC(int64(x))
-		return
+
 	case string:
 		v, err = ParseJSONtime(x)
 		return
+
 	default:
-		err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, v)
+		var i int64
+		i, err = Iface2Int(x)
+		if err != nil {
+			err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, v)
+			return
+		}
+		v = UnixNano2UTC(i)
 		return
 	}
 }
