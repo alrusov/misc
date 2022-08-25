@@ -163,6 +163,10 @@ func (m InterfaceMap) GetTime(name string) (v time.Time, err error) {
 func Iface2Float(x interface{}) (v float64, err error) {
 	vv := reflect.ValueOf(x)
 
+	if vv.Kind() == reflect.Ptr {
+		vv = vv.Elem()
+	}
+
 	switch vv.Kind() {
 	case reflect.Float32, reflect.Float64:
 		v = vv.Float()
@@ -197,6 +201,10 @@ func Iface2Float(x interface{}) (v float64, err error) {
 // Iface2Int --
 func Iface2Int(x interface{}) (v int64, err error) {
 	vv := reflect.ValueOf(x)
+
+	if vv.Kind() == reflect.Ptr {
+		vv = vv.Elem()
+	}
 
 	switch vv.Kind() {
 	case reflect.Float32, reflect.Float64:
@@ -233,6 +241,10 @@ func Iface2Int(x interface{}) (v int64, err error) {
 func Iface2Uint(x interface{}) (v uint64, err error) {
 	vv := reflect.ValueOf(x)
 
+	if vv.Kind() == reflect.Ptr {
+		vv = vv.Elem()
+	}
+
 	switch vv.Kind() {
 	case reflect.Float32, reflect.Float64:
 		v = uint64(vv.Float())
@@ -268,6 +280,10 @@ func Iface2Uint(x interface{}) (v uint64, err error) {
 func Iface2String(x interface{}) (v string, err error) {
 	vv := reflect.ValueOf(x)
 
+	if vv.Kind() == reflect.Ptr {
+		vv = vv.Elem()
+	}
+
 	switch vv.Kind() {
 	case reflect.Float32, reflect.Float64:
 		v = strconv.FormatFloat(vv.Float(), 'g', 5, 64)
@@ -298,6 +314,10 @@ func Iface2String(x interface{}) (v string, err error) {
 // Iface2Bool --
 func Iface2Bool(x interface{}) (v bool, err error) {
 	vv := reflect.ValueOf(x)
+
+	if vv.Kind() == reflect.Ptr {
+		vv = vv.Elem()
+	}
 
 	switch vv.Kind() {
 	case reflect.Float32, reflect.Float64:
