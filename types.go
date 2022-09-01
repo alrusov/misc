@@ -184,6 +184,15 @@ func Iface2Float(x interface{}) (v float64, err error) {
 		v, err = strconv.ParseFloat(vv.String(), 64)
 		return
 
+	case reflect.Slice:
+		var s string
+		s, err = bs2String(vv)
+		if err != nil {
+			return
+		}
+		v, err = strconv.ParseFloat(s, 64)
+		return
+
 	case reflect.Bool:
 		if vv.Bool() {
 			v = 1.
@@ -221,6 +230,15 @@ func Iface2Int(x interface{}) (v int64, err error) {
 
 	case reflect.String:
 		v, err = strconv.ParseInt(vv.String(), 10, 64)
+		return
+
+	case reflect.Slice:
+		var s string
+		s, err = bs2String(vv)
+		if err != nil {
+			return
+		}
+		v, err = strconv.ParseInt(s, 10, 64)
 		return
 
 	case reflect.Bool:
@@ -262,6 +280,15 @@ func Iface2Uint(x interface{}) (v uint64, err error) {
 		v, err = strconv.ParseUint(vv.String(), 10, 64)
 		return
 
+	case reflect.Slice:
+		var s string
+		s, err = bs2String(vv)
+		if err != nil {
+			return
+		}
+		v, err = strconv.ParseUint(s, 10, 64)
+		return
+
 	case reflect.Bool:
 		if vv.Bool() {
 			v = 1
@@ -301,6 +328,15 @@ func Iface2String(x interface{}) (v string, err error) {
 		v = vv.String()
 		return
 
+	case reflect.Slice:
+		var s string
+		s, err = bs2String(vv)
+		if err != nil {
+			return
+		}
+		v = s
+		return
+
 	case reflect.Bool:
 		v = strconv.FormatBool(vv.Bool())
 		return
@@ -336,6 +372,16 @@ func Iface2Bool(x interface{}) (v bool, err error) {
 		v, err = strconv.ParseBool(vv.String())
 		return
 
+	case reflect.Slice:
+		var s string
+		s, err = bs2String(vv)
+		if err != nil {
+			return
+		}
+
+		v, err = strconv.ParseBool(s)
+		return
+
 	case reflect.Bool:
 		v = vv.Bool()
 		return
@@ -355,6 +401,10 @@ func Iface2Time(x interface{}) (v time.Time, err error) {
 
 	case string:
 		v, err = ParseJSONtime(x)
+		return
+
+	case []byte:
+		v, err = ParseJSONtime(UnsafeByteSlice2String(x))
 		return
 
 	default:
@@ -437,6 +487,19 @@ func MarshalBin(src interface{}) (buf *bytes.Buffer, err error) {
 func UnmarshalBin(buf *bytes.Buffer, dst interface{}) (err error) {
 	decoder := gob.NewDecoder(buf)
 	return decoder.Decode(dst)
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+// v.Kind() is a slice - already checked
+func bs2String(v reflect.Value) (s string, err error) {
+	k := v.Type().Elem().Kind()
+	if k != reflect.Uint8 {
+		err = fmt.Errorf(`slice element %s is not %s`, k, reflect.Uint8)
+		return
+	}
+
+	return string(v.Bytes()), nil
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//

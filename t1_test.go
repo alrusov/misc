@@ -489,13 +489,32 @@ func testJoin(t *testing.T, f func(b testJoinBlock) string) {
 //----------------------------------------------------------------------------------------------------------------------------//
 
 func TestIface2IfacePtr(t *testing.T) {
-	type xx int
-	n := xx(13)
-	err := Iface2IfacePtr("-1234", &n)
-	if err != nil {
-		t.Errorf("%s", err)
+	{
+		type xx int
+		n := xx(13)
+		err := Iface2IfacePtr("-1234", &n)
+		if err != nil {
+			t.Errorf("%s", err)
+		} else if n != -1234 {
+			t.Errorf("got %d, expected %d", n, -1234)
+		}
 	}
 
+	{
+		n, err := Iface2Int([]byte("-1234"))
+		if err != nil {
+			t.Errorf("%s", err)
+		} else if n != -1234 {
+			t.Errorf("got %d, expected %d", n, -1234)
+		}
+	}
+
+	{
+		_, err := Iface2Int([]int{1, 2, 3, 4})
+		if err == nil {
+			t.Errorf("error expected")
+		}
+	}
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
