@@ -1,6 +1,9 @@
 package misc
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
@@ -52,6 +55,9 @@ var jsonFormats = []string{
 	DateTimeFormatShortJSONTZ,
 	DateFormatRev + "T" + TimeFormatWithMS + "-0700",
 	DateFormatRev + "T" + TimeFormat + "-0700",
+	DateFormatRev,
+	DateFormatRev + "Z",
+	DateFormatRev + "-0700",
 }
 
 // ParseJSONtime --
@@ -63,6 +69,7 @@ func ParseJSONtime(s string) (t time.Time, err error) {
 		}
 	}
 
+	err = fmt.Errorf(`illegal time format`)
 	return
 }
 
