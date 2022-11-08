@@ -24,6 +24,7 @@ func signalHandler() {
 			Logger("", "IN", "Signal \"%s\" received", signal.String())
 			StopApp(0)
 		default:
+			Logger("", "DE", "Signal \"%s\" received", signal.String())
 		}
 	}
 }

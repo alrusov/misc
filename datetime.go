@@ -32,7 +32,8 @@ const DateTimeFormatWithMS string = DateFormat + " " + TimeFormatWithMS
 const DateTimeFormatRevWithMS string = DateFormatRev + " " + TimeFormatWithMS
 
 // DateTimeFormatJSON -- JSON format
-const DateTimeFormatJSON string = DateFormatRev + "T" + TimeFormatWithMS + "Z"
+const DateTimeFormatJSONWithoutZ string = DateFormatRev + "T" + TimeFormatWithMS
+const DateTimeFormatJSON string = DateTimeFormatJSONWithoutZ + "Z"
 
 // DateTimeFormatJSONTZ -- JSON format with TZ
 const DateTimeFormatJSONTZ string = DateFormatRev + "T" + TimeFormatWithMS + DateTimeFormatTZ
@@ -49,6 +50,7 @@ const DateTimeFormatTZ = "Z07:00"
 //----------------------------------------------------------------------------------------------------------------------------//
 
 var jsonFormats = []string{
+	DateTimeFormatJSONWithoutZ,
 	DateTimeFormatJSON,
 	DateTimeFormatJSONTZ,
 	DateTimeFormatShortJSON,

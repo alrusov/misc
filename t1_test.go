@@ -175,27 +175,31 @@ func TestGzip(t *testing.T) {
 //----------------------------------------------------------------------------------------------------------------------------//
 
 func TestParseJSONtime(t *testing.T) {
-	src := []string{
-		"2020-09-08T10:06:05.000+03:00",
-		"2020-09-08T10:06:05.000+0300",
-		"2020-09-08T10:06:05+03:00",
-		"2020-09-08T10:06:05+0300",
-		"2020-09-08T07:06:05.000Z",
-		"2020-09-08T07:06:05.000",
-		"2020-09-08T07:06:05Z",
-		"2020-09-08T07:06:05",
+	expectedWithoutMS := time.Date(2020, 9, 8, 7, 6, 5, 0, time.UTC)
+	expectedWithMS := time.Date(2020, 9, 8, 7, 6, 5, 123*int(time.Millisecond), time.UTC)
+
+	src := []struct {
+		s        string
+		expected time.Time ``
+	}{
+		{s: "2020-09-08T10:06:05.123+03:00", expected: expectedWithMS},
+		{s: "2020-09-08T10:06:05.123+0300", expected: expectedWithMS},
+		{s: "2020-09-08T10:06:05+03:00", expected: expectedWithoutMS},
+		{s: "2020-09-08T10:06:05+0300", expected: expectedWithoutMS},
+		{s: "2020-09-08T07:06:05.123Z", expected: expectedWithMS},
+		{s: "2020-09-08T07:06:05.123", expected: expectedWithMS},
+		{s: "2020-09-08T07:06:05Z", expected: expectedWithoutMS},
+		{s: "2020-09-08T07:06:05", expected: expectedWithoutMS},
 	}
 
-	expected := time.Date(2020, 9, 8, 7, 6, 5, 0, time.UTC).UnixNano()
-
-	for _, s := range src {
-		tt, err := ParseJSONtime(s)
+	for i, d := range src {
+		tt, err := ParseJSONtime(d.s)
 		if err != nil {
-			t.Errorf(`"%s": %s`, s, err.Error())
+			t.Errorf(`"%s": %s`, d.s, err.Error())
 			continue
 		}
-		if tt.UnixNano() != expected {
-			t.Errorf(`"%s": got %d, extected %d`, s, tt.UnixNano(), expected)
+		if !tt.Equal(d.expected) {
+			t.Errorf(`"[%d] %s": got %v, expected %v`, i, d.s, tt, d.expected)
 			continue
 		}
 	}
