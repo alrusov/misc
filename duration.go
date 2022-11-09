@@ -44,6 +44,12 @@ func Interval2Int64(interval string) (int64, error) {
 		return 0, nil
 	}
 
+	sign := int64(1)
+	if interval[0] == '-' {
+		sign = -1
+		interval = interval[1:]
+	}
+
 	if !matchRE.MatchString(interval) {
 		return 0, fmt.Errorf(`bad interval "%s"`, interval)
 	}
@@ -72,7 +78,7 @@ func Interval2Int64(interval string) (int64, error) {
 		val += n * m
 	}
 
-	return val, nil
+	return sign * val, nil
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
