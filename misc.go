@@ -727,3 +727,16 @@ func JoinStrings(prefix string, suffix string, sep string, in []string) (out str
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
+
+func StructFieldName(f *reflect.StructField, tp string) (name string) {
+	name, ok := f.Tag.Lookup(tp)
+	if !ok {
+		name = f.Name
+		return
+	}
+
+	name = strings.TrimSpace(strings.Split(name, ",")[0])
+	return
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
