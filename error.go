@@ -16,7 +16,7 @@ func (me *Error) SetCode(code int) {
 }
 
 // SetMessage --
-func (me *Error) SetMessage(format string, options ...interface{}) {
+func (me *Error) SetMessage(format string, options ...any) {
 	me.msg = fmt.Sprintf(format, options...)
 }
 
@@ -31,7 +31,7 @@ func (me *Error) Code() int {
 }
 
 // MakeError --
-func MakeError(code int, format string, options ...interface{}) *Error {
+func MakeError(code int, format string, options ...any) *Error {
 	e := &Error{}
 	e.SetCode(code)
 	e.SetMessage(format, options...)

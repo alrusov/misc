@@ -100,15 +100,15 @@ var (
 
 type (
 	// ExitFunc --
-	ExitFunc func(code int, param interface{})
+	ExitFunc func(code int, param any)
 
 	exitElement struct {
 		name  string
 		f     ExitFunc
-		param interface{}
+		param any
 	}
 
-	loggerFunc func(facility string, level string, message string, params ...interface{})
+	loggerFunc func(facility string, level string, message string, params ...any)
 )
 
 type (
@@ -211,7 +211,7 @@ func Exit() {
 }
 
 // AddExitFunc --
-func AddExitFunc(name string, f ExitFunc, param interface{}) {
+func AddExitFunc(name string, f ExitFunc, param any) {
 	DelExitFunc(name)
 	exitChain = append(exitChain, exitElement{name: name, f: f, param: param})
 }
@@ -230,7 +230,7 @@ func DelExitFunc(name string) {
 //----------------------------------------------------------------------------------------------------------------------------//
 
 // SimpleLogger --
-func simpleLogger(facility string, level string, message string, params ...interface{}) {
+func simpleLogger(facility string, level string, message string, params ...any) {
 	fmt.Printf(level+": "+message+EOS, params...)
 }
 
@@ -526,7 +526,7 @@ func (m *Messages) Len() int {
 }
 
 // Add --
-func (m *Messages) Add(msg string, params ...interface{}) {
+func (m *Messages) Add(msg string, params ...any) {
 	if msg != "" {
 		m.mutex.Lock()
 		defer m.mutex.Unlock()

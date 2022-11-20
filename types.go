@@ -26,7 +26,7 @@ type (
 
 type (
 	// InterfaceMap --
-	InterfaceMap map[string]interface{}
+	InterfaceMap map[string]any
 
 	// ByteSliceMap --
 	ByteSliceMap map[string][]byte
@@ -160,7 +160,7 @@ func (m InterfaceMap) GetTime(name string) (v time.Time, err error) {
 //----------------------------------------------------------------------------------------------------------------------------//
 
 // Iface2Float --
-func Iface2Float(x interface{}) (v float64, err error) {
+func Iface2Float(x any) (v float64, err error) {
 	vv := reflect.ValueOf(x)
 
 	if vv.Kind() == reflect.Ptr {
@@ -208,7 +208,7 @@ func Iface2Float(x interface{}) (v float64, err error) {
 }
 
 // Iface2Int --
-func Iface2Int(x interface{}) (v int64, err error) {
+func Iface2Int(x any) (v int64, err error) {
 	vv := reflect.ValueOf(x)
 
 	if vv.Kind() == reflect.Ptr {
@@ -256,7 +256,7 @@ func Iface2Int(x interface{}) (v int64, err error) {
 }
 
 // Iface2Uint --
-func Iface2Uint(x interface{}) (v uint64, err error) {
+func Iface2Uint(x any) (v uint64, err error) {
 	vv := reflect.ValueOf(x)
 
 	if vv.Kind() == reflect.Ptr {
@@ -304,7 +304,7 @@ func Iface2Uint(x interface{}) (v uint64, err error) {
 }
 
 // Iface2String --
-func Iface2String(x interface{}) (v string, err error) {
+func Iface2String(x any) (v string, err error) {
 	vv := reflect.ValueOf(x)
 
 	if vv.Kind() == reflect.Ptr {
@@ -348,7 +348,7 @@ func Iface2String(x interface{}) (v string, err error) {
 }
 
 // Iface2Bool --
-func Iface2Bool(x interface{}) (v bool, err error) {
+func Iface2Bool(x any) (v bool, err error) {
 	vv := reflect.ValueOf(x)
 
 	if vv.Kind() == reflect.Ptr {
@@ -393,7 +393,7 @@ func Iface2Bool(x interface{}) (v bool, err error) {
 }
 
 // Iface2Time --
-func Iface2Time(x interface{}) (v time.Time, err error) {
+func Iface2Time(x any) (v time.Time, err error) {
 	switch x := x.(type) {
 	case time.Time:
 		v = x
@@ -421,14 +421,14 @@ func Iface2Time(x interface{}) (v time.Time, err error) {
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
-func Iface2IfacePtr(src interface{}, dstPtr interface{}) (err error) {
+func Iface2IfacePtr(src any, dstPtr any) (err error) {
 	v := reflect.ValueOf(dstPtr)
 	if v.Kind() != reflect.Ptr {
 		return fmt.Errorf(`"%v" is not a pointer`, dstPtr)
 	}
 
 	e := v.Elem()
-	var vv interface{}
+	var vv any
 
 	switch e.Kind() {
 	case reflect.Bool:
@@ -476,7 +476,7 @@ func Iface2IfacePtr(src interface{}, dstPtr interface{}) (err error) {
 //----------------------------------------------------------------------------------------------------------------------------//
 
 // MarshalBin --
-func MarshalBin(src interface{}) (buf *bytes.Buffer, err error) {
+func MarshalBin(src any) (buf *bytes.Buffer, err error) {
 	buf = new(bytes.Buffer)
 	encoder := gob.NewEncoder(buf)
 	err = encoder.Encode(src)
@@ -484,7 +484,7 @@ func MarshalBin(src interface{}) (buf *bytes.Buffer, err error) {
 }
 
 // UnmarshalBin --
-func UnmarshalBin(buf *bytes.Buffer, dst interface{}) (err error) {
+func UnmarshalBin(buf *bytes.Buffer, dst any) (err error) {
 	decoder := gob.NewDecoder(buf)
 	return decoder.Decode(dst)
 }
