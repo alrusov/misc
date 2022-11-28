@@ -739,4 +739,32 @@ func StructFieldName(f *reflect.StructField, tp string) (name string) {
 	return
 }
 
+func StructFieldOpts(f *reflect.StructField, tp string) (opts StringMap) {
+	opts = make(StringMap, 8)
+
+	tags, ok := f.Tag.Lookup(tp)
+	if !ok {
+		return
+	}
+
+	list := strings.Split(tags, ",")
+
+	for i := 0; i < len(list); i++ {
+		opt := strings.TrimSpace(list[i])
+		v := ""
+		if i == 0 {
+			opt, v = "", opt
+		} else {
+			sp := strings.Split(opt, "=")
+			if len(sp) > 1 {
+				opt = strings.TrimSpace(sp[0])
+				v = strings.TrimSpace(sp[1])
+			}
+		}
+		opts[opt] = v
+	}
+
+	return
+}
+
 //----------------------------------------------------------------------------------------------------------------------------//
