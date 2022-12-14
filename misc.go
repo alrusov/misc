@@ -538,7 +538,7 @@ func (m *Messages) Add(msg string, params ...any) {
 // AddError --
 func (m *Messages) AddError(err error) {
 	if err != nil {
-		m.Add(err.Error())
+		m.Add("%s", err.Error())
 	}
 }
 
