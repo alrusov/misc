@@ -728,6 +728,45 @@ func JoinStrings(prefix string, suffix string, sep string, in []string) (out str
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
+func StructFieldTags(s any, fields []string, tp string) (names []string, err error) {
+	t := reflect.TypeOf(s)
+	if t.Kind() == reflect.Pointer {
+		t = t.Elem()
+	}
+
+	if t.Kind() != reflect.Struct {
+		err = fmt.Errorf("%T is not a struct or pointer to a struct", s)
+		return
+	}
+
+	names = make([]string, 0, len(fields))
+	msgs := NewMessages()
+
+	for _, f := range fields {
+		sf, exists := t.FieldByName(f)
+		if !exists {
+			msgs.Add(`unknown field "%s"`, f)
+			continue
+		}
+
+		if !sf.IsExported() {
+			msgs.Add(`field "%s" is not exported`, f)
+			continue
+		}
+
+		name := StructFieldName(&sf, tp)
+		if name == "" {
+			msgs.Add(`field "%s" has empty value of "%s" tag`, f, tp)
+			continue
+		}
+
+		names = append(names, name)
+	}
+
+	err = msgs.Error()
+	return
+}
+
 func StructFieldName(f *reflect.StructField, tp string) (name string) {
 	name, ok := f.Tag.Lookup(tp)
 	if !ok {
