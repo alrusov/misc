@@ -237,6 +237,7 @@ func TestInterval2Int64(t *testing.T) {
 		{" 30s  5h    2m  30s    ", false, int64(30*time.Second + 5*time.Hour + 2*time.Minute + 30*time.Second)},
 		{" 30  5h    2m  30    ", false, int64(30*time.Second + 5*time.Hour + 2*time.Minute + 30*time.Second)},
 		{"10ms11ns", false, int64(10*time.Millisecond + 11*time.Nanosecond)},
+		{"10ms11ns5w", false, int64(10*time.Millisecond + 11*time.Nanosecond + 5*7*24*time.Hour)},
 	}
 
 	for i, df := range cases {
@@ -255,6 +256,29 @@ func TestInterval2Int64(t *testing.T) {
 
 		if result != df.result {
 			t.Errorf(`[%d] "%s": got %d, expected %d`, i+1, df.src, result, df.result)
+		}
+	}
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+func TestInt2Interval(t *testing.T) {
+	cases := []struct {
+		s string
+		v int64
+	}{
+		{"-2s", int64(-2 * time.Second)},
+		{"0s", 0},
+		{"5h2m30s", int64(5*time.Hour + 2*time.Minute + 30*time.Second)},
+		{"5w10ms11ns", int64(10*time.Millisecond + 11*time.Nanosecond + 5*7*24*time.Hour)},
+		{"1w2d3h40m50s60ms70us80ns", int64(1*7*24*time.Hour + 2*24*time.Hour + 3*time.Hour + 40*time.Minute + 50*time.Second + 60*time.Millisecond + 70*time.Microsecond + 80*time.Nanosecond)},
+	}
+
+	for i, df := range cases {
+		result := Int2Interval(df.v)
+
+		if result != df.s {
+			t.Errorf(`[%d] "%d": got "%s", expected "%s"`, i+1, df.v, result, df.s)
 		}
 	}
 }

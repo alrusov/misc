@@ -12,21 +12,35 @@ import (
 
 // empty as a seconds
 var (
-	re         = `(\d+)(ns|u|us|ms|s|m|h|d|)`
+	re         = `(\d+)(ns|u|us|ms|s|m|h|d|w|)`
 	matchRE    = regexp.MustCompile(`^((?:\s*)` + re + `(?:\s*))+$`)
 	intervalRE = regexp.MustCompile(re)
 
-	timeUnits = map[string]int64{
-		"ns": int64(time.Nanosecond),
-		"u":  int64(time.Microsecond),
-		"us": int64(time.Microsecond),
-		"ms": int64(time.Millisecond),
-		"s":  int64(time.Second),
-		"m":  int64(time.Minute),
-		"h":  int64(time.Hour),
-		"d":  int64(time.Hour * 24),
+	timeUnitsDef = []struct {
+		n string
+		v int64
+	}{
+		{"w", int64(time.Hour * 24 * 7)},
+		{"d", int64(time.Hour * 24)},
+		{"h", int64(time.Hour)},
+		{"m", int64(time.Minute)},
+		{"s", int64(time.Second)},
+		{"ms", int64(time.Millisecond)},
+		{"us", int64(time.Microsecond)},
+		{"u", int64(time.Microsecond)},
+		{"ns", int64(time.Nanosecond)},
 	}
+
+	timeUnits map[string]int64
 )
+
+func init() {
+	timeUnits = make(map[string]int64, len(timeUnitsDef))
+
+	for _, v := range timeUnitsDef {
+		timeUnits[v.n] = v.v
+	}
+}
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
@@ -79,6 +93,33 @@ func Interval2Int64(interval string) (int64, error) {
 	}
 
 	return sign * val, nil
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+func Duration2Interval(d time.Duration) string {
+	return Int2Interval(int64(d))
+}
+
+func Int2Interval(d int64) string {
+	p := make([]string, 0, 2*len(timeUnitsDef))
+
+	for _, df := range timeUnitsDef {
+		v1 := d / df.v
+		v2 := d % df.v
+
+		if v1 != 0 {
+			p = append(p, strconv.FormatInt(v1, 10), df.n)
+		}
+
+		d = v2
+	}
+
+	if len(p) == 0 {
+		return "0s"
+	}
+
+	return strings.Join(p, "")
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
