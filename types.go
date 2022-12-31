@@ -466,8 +466,46 @@ func Iface2IfacePtr(src any, dstPtr any) (err error) {
 		}
 		e.SetString(vv.(string))
 
+	case reflect.Struct:
+		switch dv := dstPtr.(type) {
+		case *time.Time:
+			*dv, err = Iface2Time(src)
+			if err != nil {
+				return
+			}
+
+		}
+
 	default:
 		err = fmt.Errorf(`unsupported kind "%s"`, e.Kind())
+	}
+
+	return
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+func BaseType(srcT reflect.Type) (t reflect.Type) {
+	t = srcT
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+
+	switch t.Kind() {
+	case reflect.Bool:
+		t = reflect.TypeOf(false)
+
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		t = reflect.TypeOf(int64(0))
+
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		t = reflect.TypeOf(uint64(0))
+
+	case reflect.Float32, reflect.Float64:
+		t = reflect.TypeOf(float64(0))
+
+	case reflect.String:
+		t = reflect.TypeOf("")
 	}
 
 	return
