@@ -495,13 +495,31 @@ func BaseType(srcT reflect.Type) (t reflect.Type) {
 	case reflect.Bool:
 		t = reflect.TypeOf(false)
 
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+	case reflect.Int:
+		t = reflect.TypeOf(int(0))
+	case reflect.Int8:
+		t = reflect.TypeOf(int8(0))
+	case reflect.Int16:
+		t = reflect.TypeOf(int16(0))
+	case reflect.Int32:
+		t = reflect.TypeOf(int32(0))
+	case reflect.Int64:
 		t = reflect.TypeOf(int64(0))
 
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+	case reflect.Uint:
+		t = reflect.TypeOf(uint(0))
+	case reflect.Uint8:
+		t = reflect.TypeOf(uint8(0))
+	case reflect.Uint16:
+		t = reflect.TypeOf(uint16(0))
+	case reflect.Uint32:
+		t = reflect.TypeOf(uint32(0))
+	case reflect.Uint64:
 		t = reflect.TypeOf(uint64(0))
 
-	case reflect.Float32, reflect.Float64:
+	case reflect.Float32:
+		t = reflect.TypeOf(float32(0))
+	case reflect.Float64:
 		t = reflect.TypeOf(float64(0))
 
 	case reflect.String:
