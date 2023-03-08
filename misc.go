@@ -728,7 +728,7 @@ func JoinStrings(prefix string, suffix string, sep string, in []string) (out str
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
-func StructFieldTags(s any, fields []string, tp string) (names []string, err error) {
+func StructTags(s any, fields []string, tag string) (names []string, err error) {
 	t := reflect.TypeOf(s)
 	if t.Kind() == reflect.Pointer {
 		t = t.Elem()
@@ -743,7 +743,9 @@ func StructFieldTags(s any, fields []string, tp string) (names []string, err err
 	msgs := NewMessages()
 
 	for _, f := range fields {
-		sf, exists := t.FieldByName(f)
+		ff := strings.Split(f, ".")
+
+		sf, exists := t.FieldByName(ff[0])
 		if !exists {
 			msgs.Add(`unknown field "%s"`, f)
 			continue
@@ -754,21 +756,52 @@ func StructFieldTags(s any, fields []string, tp string) (names []string, err err
 			continue
 		}
 
-		name := StructFieldName(&sf, tp)
-		if name == "" {
-			msgs.Add(`field "%s" has empty value of "%s" tag`, f, tp)
+		if len(ff) == 1 {
+			// simple type
+			name := StructTagName(&sf, tag)
+			if name == "" {
+				msgs.Add(`field "%s" has empty value of "%s" tag`, f, tag)
+				continue
+			}
+
+			names = append(names, name)
 			continue
 		}
 
-		names = append(names, name)
+		// struct expected
+
+		fn := strings.Join(ff[1:], ".")
+
+		fTp := sf.Type
+		if fTp.Kind() == reflect.Pointer {
+			fTp = fTp.Elem()
+		}
+
+		if fTp.Kind() != reflect.Struct {
+			msgs.Add("field %s is not a struct or pointer to a struct", fn)
+			continue
+		}
+
+		var subNames []string
+		subNames, err = StructTags(
+			reflect.New(fTp).Interface(),
+			[]string{fn},
+			tag,
+		)
+		if err != nil {
+			msgs.AddError(err)
+			continue
+		}
+
+		names = append(names, subNames...)
 	}
 
 	err = msgs.Error()
 	return
 }
 
-func StructFieldName(f *reflect.StructField, tp string) (name string) {
-	name, ok := f.Tag.Lookup(tp)
+func StructTagName(f *reflect.StructField, tag string) (name string) {
+	name, ok := f.Tag.Lookup(tag)
 	if !ok {
 		name = f.Name
 		return
@@ -778,10 +811,10 @@ func StructFieldName(f *reflect.StructField, tp string) (name string) {
 	return
 }
 
-func StructFieldOpts(f *reflect.StructField, tp string) (opts StringMap) {
+func StructTagOpts(f *reflect.StructField, tag string) (opts StringMap) {
 	opts = make(StringMap, 8)
 
-	tags, ok := f.Tag.Lookup(tp)
+	tags, ok := f.Tag.Lookup(tag)
 	if !ok {
 		return
 	}
