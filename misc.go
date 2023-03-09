@@ -729,6 +729,10 @@ func JoinStrings(prefix string, suffix string, sep string, in []string) (out str
 //----------------------------------------------------------------------------------------------------------------------------//
 
 func StructTags(s any, fields []string, tag string) (names []string, err error) {
+	return structTags("", s, fields, tag)
+}
+
+func structTags(prefix string, s any, fields []string, tag string) (names []string, err error) {
 	t := reflect.TypeOf(s)
 	if t.Kind() == reflect.Pointer {
 		t = t.Elem()
@@ -737,6 +741,10 @@ func StructTags(s any, fields []string, tag string) (names []string, err error) 
 	if t.Kind() != reflect.Struct {
 		err = fmt.Errorf("%T is not a struct or pointer to a struct", s)
 		return
+	}
+
+	if prefix != "" {
+		prefix += "."
 	}
 
 	names = make([]string, 0, len(fields))
@@ -756,15 +764,16 @@ func StructTags(s any, fields []string, tag string) (names []string, err error) 
 			continue
 		}
 
+		name := StructTagName(&sf, tag)
+
 		if len(ff) == 1 {
 			// simple type
-			name := StructTagName(&sf, tag)
 			if name == "" {
 				msgs.Add(`field "%s" has empty value of "%s" tag`, f, tag)
 				continue
 			}
 
-			names = append(names, name)
+			names = append(names, prefix+name)
 			continue
 		}
 
@@ -783,7 +792,8 @@ func StructTags(s any, fields []string, tag string) (names []string, err error) 
 		}
 
 		var subNames []string
-		subNames, err = StructTags(
+		subNames, err = structTags(
+			prefix+name,
 			reflect.New(fTp).Interface(),
 			[]string{fn},
 			tag,
