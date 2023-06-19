@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
+	"math"
 	"reflect"
 	"strconv"
 	"time"
@@ -313,7 +314,13 @@ func Iface2String(x any) (v string, err error) {
 
 	switch vv.Kind() {
 	case reflect.Float32, reflect.Float64:
-		v = strconv.FormatFloat(vv.Float(), 'g', 5, 64)
+		f := vv.Float()
+		// is math.Trunc(f) == f correct??
+		if math.Trunc(f) == f && f >= float64(math.MinInt64) && f <= float64(math.MaxInt64) {
+			v = strconv.FormatInt(int64(f), 10)
+			return
+		}
+		v = strconv.FormatFloat(vv.Float(), 'g', -12, 64)
 		return
 
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:

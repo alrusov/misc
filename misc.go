@@ -850,3 +850,33 @@ func StructTagOpts(f *reflect.StructField, tag string) (opts StringMap) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
+
+func SplitAndTrim(src string, delimiter string) (dst []string) {
+	src = strings.TrimSpace(src)
+	if len(src) == 0 {
+		return
+	}
+
+	dst = strings.Split(src, delimiter)
+	dstI := 0
+
+	for srcI, s := range dst {
+		s = strings.TrimSpace(s)
+		if s == "" {
+			continue
+		}
+
+		if dstI != srcI {
+			dst[dstI] = s
+		}
+		dstI++
+	}
+
+	if dstI != len(dst) {
+		dst = dst[:dstI]
+	}
+
+	return
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
