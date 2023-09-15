@@ -294,7 +294,7 @@ func AbsPath(name string) (string, error) {
 
 // IsDebug --
 func IsDebug() bool {
-	return appExecName == "__debug_bin" // simple workaround for the VS Code
+	return strings.HasPrefix(appExecName, "__debug") // simple workaround for the VS Code
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
