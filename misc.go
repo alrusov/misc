@@ -542,6 +542,10 @@ func (m *Messages) AddError(err error) {
 	}
 }
 
+func (m *Messages) Content() []string {
+	return m.s
+}
+
 // String --
 func (m *Messages) String(separators ...string) string {
 	m.mutex.RLock()
