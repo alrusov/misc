@@ -884,3 +884,10 @@ func SplitAndTrim(src string, delimiter string) (dst []string) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
+
+func IsNil(obj any) bool {
+	return obj == nil ||
+		(reflect.ValueOf(obj).Kind() == reflect.Pointer && reflect.ValueOf(obj).IsNil())
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
