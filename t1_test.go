@@ -297,11 +297,23 @@ func TestEnv(t *testing.T) {
 var qs = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
 
 func TestUnsafeByteSlice2String(b *testing.T) {
-	s := UnsafeByteSlice2String([]byte(qs))
-	if s != qs {
+	bb := []byte(qs)
+	s := UnsafeByteSlice2String(bb)
+	bb[0] = '!'
+	if s != string(bb) {
 		b.Fatalf("%s != %s", s, qs)
 	}
-	runtime.KeepAlive(qs) // just as an example, not really required in this case (qs is global)
+	runtime.KeepAlive(bb)
+
+	s = UnsafeByteSlice2String([]byte{})
+	if s != "" {
+		b.Fatalf("%s != %s", s, qs)
+	}
+
+	s = UnsafeByteSlice2String(nil)
+	if s != "" {
+		b.Fatalf("%s != %s", s, qs)
+	}
 }
 
 func TestUnsafeString2ByteSlice(b *testing.T) {
@@ -310,6 +322,11 @@ func TestUnsafeString2ByteSlice(b *testing.T) {
 		b.Fatalf("%s != %s", string(bb), qs)
 	}
 	runtime.KeepAlive(qs) // just as an example, not really required in this case (qs is global)
+
+	bb = UnsafeString2ByteSlice("")
+	if len(bb) != 0 {
+		b.Fatalf("%s != %s", string(bb), "")
+	}
 }
 
 func BenchmarkUnsafeByteSlice2String(b *testing.B) {

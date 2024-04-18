@@ -632,27 +632,14 @@ func Sha512Hash(p []byte) []byte {
 // UnsafeByteSlice2String -- fast convert []byte to string without memory allocs
 // Don't forget to use runtime.KeepAlive(b) in the caller if necessary!
 func UnsafeByteSlice2String(b []byte) (s string) {
-	hs := (*reflect.StringHeader)(unsafe.Pointer(&s))
-	hb := (*reflect.SliceHeader)(unsafe.Pointer(&b))
-
-	hs.Len = hb.Len
-	hs.Data = hb.Data
-
-	return
+	return unsafe.String(unsafe.SliceData(b), len(b))
 }
 
 // UnsafeString2ByteSlice -- fast convert string to []byte without memory allocs
 // Don't forget to use runtime.KeepAlive(s) in the caller if necessary!
 // Don't try to change result without thinking hard before that!
 func UnsafeString2ByteSlice(s string) (b []byte) {
-	hs := (*reflect.StringHeader)(unsafe.Pointer(&s))
-	hb := (*reflect.SliceHeader)(unsafe.Pointer(&b))
-
-	hb.Len = hs.Len
-	hb.Cap = hs.Len
-	hb.Data = hs.Data
-
-	return
+	return unsafe.Slice(unsafe.StringData(s), len(s))
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
