@@ -1,3 +1,3 @@
 module github.com/alrusov/misc
 
-go 1.22.2
+go 1.22.5

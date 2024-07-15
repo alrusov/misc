@@ -292,9 +292,17 @@ func AbsPath(name string) (string, error) {
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
+var (
+	forcedDebugMode = false
+)
+
+func SetDebugMode(mode bool) {
+	forcedDebugMode = mode
+}
+
 // IsDebug --
 func IsDebug() bool {
-	return strings.HasPrefix(appExecName, "__debug") // simple workaround for the VS Code
+	return forcedDebugMode || strings.HasPrefix(appExecName, "__debug") // simple workaround for the VS Code
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
