@@ -514,21 +514,19 @@ func IsMyIP(ip string) (bool, error) {
 
 // Messages --
 type Messages struct {
-	mutex *sync.RWMutex
-	s     []string
+	sync.RWMutex
+	s []string
 }
 
 // NewMessages --
 func NewMessages() *Messages {
-	return &Messages{
-		mutex: new(sync.RWMutex),
-	}
+	return &Messages{}
 }
 
 // Len --
 func (m *Messages) Len() int {
-	m.mutex.RLock()
-	defer m.mutex.RUnlock()
+	m.RLock()
+	defer m.RUnlock()
 
 	return len(m.s)
 }
@@ -536,8 +534,8 @@ func (m *Messages) Len() int {
 // Add --
 func (m *Messages) Add(msg string, params ...any) {
 	if msg != "" {
-		m.mutex.Lock()
-		defer m.mutex.Unlock()
+		m.Lock()
+		defer m.Unlock()
 
 		m.s = append(m.s, fmt.Sprintf(msg, params...))
 	}
@@ -556,8 +554,8 @@ func (m *Messages) Content() []string {
 
 // String --
 func (m *Messages) String(separators ...string) string {
-	m.mutex.RLock()
-	defer m.mutex.RUnlock()
+	m.RLock()
+	defer m.RUnlock()
 
 	if len(m.s) == 0 {
 		return ""
