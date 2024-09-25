@@ -266,11 +266,21 @@ func Iface2Uint(x any) (v uint64, err error) {
 
 	switch vv.Kind() {
 	case reflect.Float32, reflect.Float64:
-		v = uint64(vv.Float())
+		sv := vv.Float()
+		if sv < 0 {
+			err = fmt.Errorf("negative value %v", sv)
+			return
+		}
+		v = uint64(sv)
 		return
 
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		v = uint64(vv.Int())
+		sv := vv.Int()
+		if sv < 0 {
+			err = fmt.Errorf("negative value %v", sv)
+			return
+		}
+		v = uint64(sv)
 		return
 
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
