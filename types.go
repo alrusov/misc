@@ -425,13 +425,13 @@ func Iface2Time(x any) (v time.Time, err error) {
 		return
 
 	default:
-		var i int64
-		i, err = Iface2Int(x)
+		var ts int64
+		ts, err = Iface2Int(x)
 		if err != nil {
 			err = fmt.Errorf(`illegal type of the "%#v" - "%T", expected "%T"`, x, x, v)
 			return
 		}
-		v = UnixNano2UTC(i)
+		v = time.Unix(ts/int64(time.Second), ts%int64(time.Second))
 		return
 	}
 }
