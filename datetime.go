@@ -79,11 +79,6 @@ func ParseJSONtime(s string) (t time.Time, err error) {
 
 // Time2JSON --
 func Time2JSON(t time.Time) string {
-	return t.Format(DateTimeFormatJSON)
-}
-
-// Time2JSONutc --
-func Time2JSONutc(t time.Time) string {
 	return t.UTC().Format(DateTimeFormatJSON)
 }
 
