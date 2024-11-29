@@ -62,8 +62,7 @@ func LoadEnv(fileName string) (e error) {
 
 		if k == "" {
 			if !strings.Contains(s, "=") {
-				msg = "Bad format"
-				return
+				continue
 			}
 
 			sp := strings.SplitN(s, "=", 2)
