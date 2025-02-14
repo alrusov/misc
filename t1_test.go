@@ -32,13 +32,13 @@ func TestIMcoder(t *testing.T) {
 
 	buf, err := MarshalBin(src)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Errorf("%s", err.Error())
 		return
 	}
 
 	err = UnmarshalBin(buf, &dst)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Errorf("%s", err.Error())
 		return
 	}
 
