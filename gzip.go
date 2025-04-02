@@ -11,19 +11,12 @@ import (
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
-// GzipPack --  data will be truncated by ReadFrom!
+// GzipPack --  data will be truncated by Copy!
 func GzipPack(data io.Reader) (b *bytes.Buffer, err error) {
-	tmp := new(bytes.Buffer)
-
-	_, err = tmp.ReadFrom(data)
-	if err != nil {
-		return nil, err
-	}
-
 	b = new(bytes.Buffer)
 	w := gzip.NewWriter(b)
 
-	_, err = w.Write(tmp.Bytes())
+	_, err = io.Copy(w, data)
 	if err != nil {
 		return nil, err
 	}
@@ -41,18 +34,17 @@ func GzipPack(data io.Reader) (b *bytes.Buffer, err error) {
 // GzipUnpack -- data will be truncated by ReadFrom!
 func GzipUnpack(data io.Reader) (b *bytes.Buffer, err error) {
 	r, err := gzip.NewReader(data)
-
-	if r != nil {
-		defer r.Close()
-	}
-
 	if err != nil {
 		return nil, err
 	}
 
 	b = new(bytes.Buffer)
-
 	_, err = b.ReadFrom(r)
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.Close()
 	if err != nil {
 		return nil, err
 	}
