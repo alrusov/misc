@@ -884,7 +884,18 @@ func IsNil(obj any) bool {
 	}
 
 	v := reflect.ValueOf(obj)
-	return v.Kind() == reflect.Pointer && v.IsNil()
+	switch v.Kind() {
+	default:
+		return false
+
+	case reflect.Pointer,
+		reflect.Chan,
+		reflect.Func,
+		reflect.Interface,
+		reflect.Map,
+		reflect.Slice:
+		return v.IsNil()
+	}
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
