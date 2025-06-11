@@ -84,8 +84,9 @@ var (
 	appName     string
 	appWorkDir  string
 
-	appStarted   = int32(1)
-	exitLaunched = int32(0)
+	appStarted     = int32(1)
+	exitLaunched   = int32(0)
+	appInitialized = int32(0)
 
 	exitCode = 0
 
@@ -367,6 +368,14 @@ func AppWorkDir() string {
 // AppStarted -- is application started?
 func AppStarted() bool {
 	return atomic.LoadInt32(&appStarted) > 0
+}
+
+func Initialized() {
+	atomic.StoreInt32(&appInitialized, 1)
+}
+
+func AppInitialized() bool {
+	return atomic.LoadInt32(&appInitialized) > 0
 }
 
 // ExitCode -- get current exit code
