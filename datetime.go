@@ -50,8 +50,8 @@ const DateTimeFormatTZ = "Z07:00"
 //----------------------------------------------------------------------------------------------------------------------------//
 
 var jsonFormats = []string{
-	DateTimeFormatJSONWithoutZ,
 	DateTimeFormatJSON,
+	DateTimeFormatJSONWithoutZ,
 	DateTimeFormatJSONTZ,
 	DateTimeFormatShortJSON,
 	DateTimeFormatShortJSONTZ,
