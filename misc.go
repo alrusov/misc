@@ -527,9 +527,25 @@ type Messages struct {
 	s []string
 }
 
+var (
+	messagesPool = sync.Pool{
+		New: func() any {
+			return &Messages{
+				s: make([]string, 0, 16),
+			}
+		},
+	}
+)
+
+func (m *Messages) Free() {
+	clear(m.s)
+	m.s = m.s[0:0]
+	messagesPool.Put(m)
+}
+
 // NewMessages --
 func NewMessages() *Messages {
-	return &Messages{}
+	return messagesPool.Get().(*Messages)
 }
 
 // Len --
@@ -755,6 +771,7 @@ func structTags(prefix string, s any, fields []string, tag string) (names []stri
 
 	names = make([]string, 0, len(fields))
 	msgs := NewMessages()
+	defer msgs.Free()
 
 	for _, f := range fields {
 		ff := strings.Split(f, ".")
