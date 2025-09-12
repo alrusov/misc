@@ -139,11 +139,11 @@ func SetExitTimeouts(newTerminationTimeout time.Duration, newKillingTimeout time
 
 func killer() {
 	time.Sleep(terminationTimeout)
-	Logger("", "CR", "Application shutdown timeout. Force termination.")
+	Logger("", "NO", "Application shutdown timeout. Force termination.")
 	go Exit()
 
 	time.Sleep(killingTimeout)
-	Logger("", "CR", "Application termination timeout. Force killing.")
+	Logger("", "NO", "Application termination timeout. Force killing.")
 	os.Exit(exitCode)
 }
 
