@@ -164,7 +164,7 @@ func (m InterfaceMap) GetTime(name string) (v time.Time, err error) {
 func Iface2Float(x any) (v float64, err error) {
 	vv := reflect.ValueOf(x)
 
-	if vv.Kind() == reflect.Ptr {
+	if vv.Kind() == reflect.Pointer {
 		vv = vv.Elem()
 	}
 
@@ -212,7 +212,7 @@ func Iface2Float(x any) (v float64, err error) {
 func Iface2Int(x any) (v int64, err error) {
 	vv := reflect.ValueOf(x)
 
-	if vv.Kind() == reflect.Ptr {
+	if vv.Kind() == reflect.Pointer {
 		vv = vv.Elem()
 	}
 
@@ -260,7 +260,7 @@ func Iface2Int(x any) (v int64, err error) {
 func Iface2Uint(x any) (v uint64, err error) {
 	vv := reflect.ValueOf(x)
 
-	if vv.Kind() == reflect.Ptr {
+	if vv.Kind() == reflect.Pointer {
 		vv = vv.Elem()
 	}
 
@@ -318,7 +318,7 @@ func Iface2Uint(x any) (v uint64, err error) {
 func Iface2String(x any) (v string, err error) {
 	vv := reflect.ValueOf(x)
 
-	if vv.Kind() == reflect.Ptr {
+	if vv.Kind() == reflect.Pointer {
 		vv = vv.Elem()
 	}
 
@@ -368,7 +368,7 @@ func Iface2String(x any) (v string, err error) {
 func Iface2Bool(x any) (v bool, err error) {
 	vv := reflect.ValueOf(x)
 
-	if vv.Kind() == reflect.Ptr {
+	if vv.Kind() == reflect.Pointer {
 		vv = vv.Elem()
 	}
 
@@ -440,7 +440,7 @@ func Iface2Time(x any) (v time.Time, err error) {
 
 func Iface2IfacePtr(src any, dstPtr any) (err error) {
 	v := reflect.ValueOf(dstPtr)
-	if v.Kind() != reflect.Ptr {
+	if v.Kind() != reflect.Pointer {
 		return fmt.Errorf(`"%v" is not a pointer`, dstPtr)
 	}
 
@@ -504,7 +504,7 @@ func Iface2IfacePtr(src any, dstPtr any) (err error) {
 
 func BaseType(srcT reflect.Type) (t reflect.Type) {
 	t = srcT
-	if t.Kind() == reflect.Ptr {
+	if t.Kind() == reflect.Pointer {
 		t = t.Elem()
 	}
 
