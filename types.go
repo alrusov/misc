@@ -7,6 +7,7 @@ import (
 	"math"
 	"reflect"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -573,6 +574,58 @@ func bs2String(v reflect.Value) (s string, err error) {
 	}
 
 	return string(v.Bytes()), nil
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+func FieldByName(obj reflect.Value, name string) (v any, err error) {
+	path := strings.Split(name, ".")
+
+	var i int
+	var fn string
+	for i, fn = range path {
+		if IsNil(obj) {
+			return
+		}
+
+		if obj.Kind() == reflect.Pointer {
+			obj = obj.Elem()
+		}
+
+		if obj.Kind() != reflect.Struct {
+			err = fmt.Errorf(`"%s" is not a struct or pointer to struct (%s)`, strings.Join(path[:i+1], "."), obj.Kind())
+			return
+		}
+
+		obj = obj.FieldByName(fn)
+		if !obj.IsValid() {
+			break
+		}
+
+	}
+
+	if !obj.IsValid() {
+		err = fmt.Errorf(`unknown field "%s"`, strings.Join(path[:i+1], "."))
+		return
+	}
+
+	if obj.Kind() == reflect.Pointer {
+		obj = obj.Elem()
+	}
+
+	switch obj.Kind() {
+	case reflect.Struct,
+		reflect.Array,
+		reflect.Slice,
+		reflect.Map,
+		reflect.Chan,
+		reflect.Func:
+		err = fmt.Errorf(`"%s" does not have a simple type or a pointer to tham (%s)`, strings.Join(path[:i+1], "."), obj.Kind())
+		return
+	}
+
+	v = obj.Interface()
+	return
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//

@@ -20,6 +20,8 @@ import (
 	"sync/atomic"
 	"time"
 	"unsafe"
+
+	"github.com/essentialkaos/translit"
 )
 
 //----------------------------------------------------------------------------------------------------------------------------//
@@ -922,6 +924,51 @@ func IsNil(obj any) bool {
 		reflect.Slice:
 		return v.IsNil()
 	}
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+func Bits2String(v uint64, bitNames map[uint64]string) string {
+	list := make([]string, 0, 64)
+
+	b := uint64(1)
+
+	for i := uint64(0); i < 64; i++ {
+		if v&b != 0 {
+			name, exists := bitNames[b]
+			if !exists {
+				name = fmt.Sprintf("0x%0x", b)
+			}
+
+			list = append(list, name)
+		}
+
+		b = b << 1
+	}
+
+	return "[" + strings.Join(list, ",") + "]"
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+func Id2String(v uint64, names map[uint64]string) string {
+	if s, exists := names[v]; exists {
+		return s
+	}
+
+	return fmt.Sprintf("?(%d)", v)
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+func Translit(src string) (dst string) {
+	dst = strings.ReplaceAll(
+		translit.EncodeToICAO(src),
+		" ",
+		"_",
+	)
+
+	return
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
