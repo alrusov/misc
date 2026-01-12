@@ -569,3 +569,114 @@ func TestIface2IfacePtr(t *testing.T) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
+
+func TestBits2String(t *testing.T) {
+	names := map[uint64]string{
+		0x1:                "BIT_0",
+		0x4:                "BIT_2",
+		0x400:              "BIT_10",
+		0x8000000000000000: "BIT_63",
+	}
+
+	data := []struct {
+		n uint64
+		s string
+	}{
+		{n: 0x0000000000000000, s: "[]"},
+		{n: 0x0000000000000001, s: "[BIT_0]"},
+		{n: 0x0000000000000003, s: "[BIT_0,0x2]"},
+		{n: 0x0000000000000403, s: "[BIT_0,0x2,BIT_10]"},
+		{n: 0x8000000000000001, s: "[BIT_0,BIT_63]"},
+	}
+
+	for i, d := range data {
+		s := Bits2String(d.n, names)
+		if s != d.s {
+			t.Errorf("[%d] got %s, expected %s", i, s, d.s)
+		}
+	}
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+type (
+	s0 struct {
+		Int0    int
+		String0 string
+		Struct0 s1
+	}
+
+	s1 struct {
+		Uint1   uint
+		String1 string
+		Struct1 *s2
+	}
+
+	s2 struct {
+		Float2  float32
+		String2 string
+	}
+)
+
+func TestFieldByName(t *testing.T) {
+	data := &s0{
+		Int0:    0,
+		String0: "string0",
+		Struct0: s1{
+			Uint1:   1,
+			String1: "string1",
+			Struct1: &s2{
+				Float2:  2,
+				String2: "string2",
+			},
+		},
+	}
+
+	cases := []struct {
+		name  string
+		val   any
+		isErr bool
+	}{
+		{"Int0", int(0), false},
+		{"String0", "string0", false},
+		{"Struct0.Uint1", uint(1), false},
+		{"Struct0.String1", "string1", false},
+		{"Struct0.Struct1.Float2", float32(2), false},
+		{"Struct0.Struct1.String2", "string2", false},
+		{"", nil, true},
+		{"Struct0", nil, true},
+		{"Struct0.", nil, true},
+		{"Struct0.Struct1", nil, true},
+		{"Struct0.Struct1.", nil, true},
+		{"Struct0.XXX", nil, true},
+		{"Struct0.Struct1.Struct2", nil, true},
+	}
+
+	dataV := reflect.ValueOf(data)
+
+	for i, c := range cases {
+		val, err := FieldByName(dataV, c.name)
+
+		if c.isErr {
+			if err == nil {
+				t.Errorf("[%d] error expected but not found", i)
+			}
+			continue
+		}
+
+		if err != nil {
+			t.Errorf("[%d] error found: %s", i, err)
+			continue
+		}
+
+		v1 := reflect.ValueOf(c.val)
+		v2 := reflect.ValueOf(val)
+
+		if !v1.Equal(v2) {
+			t.Errorf("[%d] got %T(%v), expected %T(%v)", i, val, val, c.val, c.val)
+			continue
+		}
+	}
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
