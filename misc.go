@@ -92,22 +92,22 @@ var (
 
 	exitCode = 0
 
-	sleepInterrupted = make(chan bool, 1)
+	exitTrigger = make(chan struct{})
 
-	exitCond  = sync.NewCond(new(sync.Mutex))
-	exitChain = make([]exitElement, 0)
+	finalizers      = make([]exitElement, 0)
+	finalizersMutex sync.RWMutex
 
 	// Logger --
 	Logger loggerFunc
 )
 
 type (
-	// ExitFunc --
-	ExitFunc func(code int, param any)
+	// FinalizerFunc --
+	FinalizerFunc func(code int, param any)
 
 	exitElement struct {
 		name  string
-		f     ExitFunc
+		f     FinalizerFunc
 		param any
 	}
 
@@ -155,19 +155,7 @@ func StopApp(code int) {
 		Logger("", "DE", "Set application exit code %d", code)
 
 		exitCode = code
-
-		exitCond.Broadcast()
-
-		ex := false
-		for !ex {
-			select {
-			case sleepInterrupted <- true:
-			default:
-				ex = true
-			}
-		}
-
-		time.Sleep(100 * time.Millisecond)
+		close(exitTrigger)
 
 		go killer()
 	}
@@ -175,21 +163,12 @@ func StopApp(code int) {
 
 // WaitingForStop --
 func WaitingForStop() {
-	exitCond.L.Lock()
-	exitCond.Wait()
-	exitCond.L.Unlock()
+	<-exitTrigger
 }
 
-// WaitingForStopChan --
-func WaitingForStopChan() <-chan time.Time {
-	c := make(chan time.Time)
-
-	go func() {
-		WaitingForStop()
-		c <- NowUTC()
-	}()
-
-	return c
+// ApplicationStopped --
+func ApplicationStopped() <-chan struct{} {
+	return exitTrigger
 }
 
 // Exit -- exit application
@@ -203,9 +182,12 @@ func Exit() {
 
 		time.Sleep(1000 * time.Millisecond)
 
-		for i := len(exitChain) - 1; i >= 0; i-- {
-			Logger("", "DE", "Call finalizer \"%s\"", exitChain[i].name)
-			exitChain[i].f(exitCode, exitChain[i].param)
+		finalizersMutex.RLock()
+		defer finalizersMutex.RUnlock()
+
+		for i := len(finalizers) - 1; i >= 0; i-- {
+			Logger("", "DE", "Call finalizer \"%s\"", finalizers[i].name)
+			finalizers[i].f(exitCode, finalizers[i].param)
 		}
 
 		Logger("", "IN", "Application finished with code %d", exitCode)
@@ -213,22 +195,32 @@ func Exit() {
 	}
 }
 
-// AddExitFunc --
-func AddExitFunc(name string, f ExitFunc, param any) {
-	DelExitFunc(name)
-	exitChain = append(exitChain, exitElement{name: name, f: f, param: param})
+// AddFinalizer --
+func AddFinalizer(name string, f FinalizerFunc, param any) {
+	DelFinalizer(name)
+
+	finalizersMutex.Lock()
+	defer finalizersMutex.Unlock()
+
+	finalizers = append(finalizers, exitElement{name: name, f: f, param: param})
 }
 
-// DelExitFunc --
-func DelExitFunc(name string) {
+// DelFinalizer --
+func DelFinalizer(name string) {
+	finalizersMutex.Lock()
+	defer finalizersMutex.Unlock()
+
 	chain := make([]exitElement, 0)
-	for i := 0; i < len(exitChain); i++ {
-		if exitChain[i].name != name {
-			chain = append(chain, exitChain[i])
+	for i := 0; i < len(finalizers); i++ {
+		if finalizers[i].name != name {
+			chain = append(chain, finalizers[i])
 		}
 	}
-	exitChain = chain
+	finalizers = chain
 }
+
+var AddExitFunc = AddFinalizer
+var DelExitFunc = DelFinalizer
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
@@ -451,7 +443,7 @@ func Sleep(duration time.Duration) bool {
 	}
 
 	select {
-	case <-sleepInterrupted:
+	case <-exitTrigger:
 		return false
 	case <-time.After(duration):
 		return true

@@ -1,6 +1,6 @@
 module github.com/alrusov/misc
 
-go 1.25.5
+go 1.25.0
 
 require github.com/essentialkaos/translit v2.0.3+incompatible
 
