@@ -19,6 +19,15 @@ const TimeFormat string = "15:04:05"
 // TimeFormatWithMS -- format of the time with milliseconds
 const TimeFormatWithMS string = "15:04:05.000"
 
+// TimeFormatWithUS -- format of the time with microseconds
+const TimeFormatWithUS string = "15:04:05.000000"
+
+// TimeFormatWithNS -- format of the time with namoseconds
+const TimeFormatWithNS string = "15:04:05.000000000"
+
+// DateTimeFormatTZ --
+const DateTimeFormatTZ = "Z07:00"
+
 // DateTimeFormat -- format of the date and time
 const DateTimeFormat string = DateFormat + " " + TimeFormat
 
@@ -33,19 +42,22 @@ const DateTimeFormatRevWithMS string = DateFormatRev + " " + TimeFormatWithMS
 
 // DateTimeFormatJSON -- JSON format
 const DateTimeFormatJSONWithoutZ string = DateFormatRev + "T" + TimeFormatWithMS
+const DateTimeFormatJSONWithoutZus string = DateFormatRev + "T" + TimeFormatWithUS
+const DateTimeFormatJSONWithoutZns string = DateFormatRev + "T" + TimeFormatWithNS
 const DateTimeFormatJSON string = DateTimeFormatJSONWithoutZ + "Z"
+const DateTimeFormatJSONus string = DateTimeFormatJSONWithoutZus + "Z"
+const DateTimeFormatJSONns string = DateTimeFormatJSONWithoutZns + "Z"
 
 // DateTimeFormatJSONTZ -- JSON format with TZ
-const DateTimeFormatJSONTZ string = DateFormatRev + "T" + TimeFormatWithMS + DateTimeFormatTZ
+const DateTimeFormatJSONTZ string = DateTimeFormatJSONWithoutZ + DateTimeFormatTZ
+const DateTimeFormatJSONTZus string = DateTimeFormatJSONWithoutZus + DateTimeFormatTZ
+const DateTimeFormatJSONTZns string = DateTimeFormatJSONWithoutZns + DateTimeFormatTZ
 
 // DateTimeFormatShortJSON -- Short JSON format
 const DateTimeFormatShortJSON string = DateFormatRev + "T" + TimeFormat
 
 // DateTimeFormatShortJSONTZ -- Short JSON format with TZ
-const DateTimeFormatShortJSONTZ string = DateFormatRev + "T" + TimeFormat + DateTimeFormatTZ
-
-// DateTimeFormatTZ --
-const DateTimeFormatTZ = "Z07:00"
+const DateTimeFormatShortJSONTZ string = DateTimeFormatShortJSON + DateTimeFormatTZ
 
 //----------------------------------------------------------------------------------------------------------------------------//
 

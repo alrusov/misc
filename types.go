@@ -511,37 +511,37 @@ func BaseType(srcT reflect.Type) (t reflect.Type) {
 
 	switch t.Kind() {
 	case reflect.Bool:
-		t = reflect.TypeOf(false)
+		t = reflect.TypeFor[bool]()
 
 	case reflect.Int:
-		t = reflect.TypeOf(int(0))
+		t = reflect.TypeFor[int]()
 	case reflect.Int8:
-		t = reflect.TypeOf(int8(0))
+		t = reflect.TypeFor[int8]()
 	case reflect.Int16:
-		t = reflect.TypeOf(int16(0))
+		t = reflect.TypeFor[int16]()
 	case reflect.Int32:
-		t = reflect.TypeOf(int32(0))
+		t = reflect.TypeFor[int32]()
 	case reflect.Int64:
-		t = reflect.TypeOf(int64(0))
+		t = reflect.TypeFor[int64]()
 
 	case reflect.Uint:
-		t = reflect.TypeOf(uint(0))
+		t = reflect.TypeFor[uint]()
 	case reflect.Uint8:
-		t = reflect.TypeOf(uint8(0))
+		t = reflect.TypeFor[uint8]()
 	case reflect.Uint16:
-		t = reflect.TypeOf(uint16(0))
+		t = reflect.TypeFor[uint16]()
 	case reflect.Uint32:
-		t = reflect.TypeOf(uint32(0))
+		t = reflect.TypeFor[uint32]()
 	case reflect.Uint64:
-		t = reflect.TypeOf(uint64(0))
+		t = reflect.TypeFor[uint64]()
 
 	case reflect.Float32:
-		t = reflect.TypeOf(float32(0))
+		t = reflect.TypeFor[float32]()
 	case reflect.Float64:
-		t = reflect.TypeOf(float64(0))
+		t = reflect.TypeFor[float64]()
 
 	case reflect.String:
-		t = reflect.TypeOf("")
+		t = reflect.TypeFor[string]()
 	}
 
 	return
@@ -614,8 +614,13 @@ func FieldByName(obj reflect.Value, name string) (v any, err error) {
 	}
 
 	switch obj.Kind() {
-	case reflect.Struct,
-		reflect.Array,
+	case reflect.Struct:
+		if obj.Type() == reflect.TypeFor[time.Time]() {
+			break
+		}
+		fallthrough
+
+	case reflect.Array,
 		reflect.Slice,
 		reflect.Map,
 		reflect.Chan,
