@@ -1,8 +1,11 @@
 module github.com/alrusov/misc
 
-go 1.25.0
+go 1.26.1
 
-require github.com/essentialkaos/translit v2.0.3+incompatible
+require (
+	github.com/essentialkaos/translit v2.0.3+incompatible
+	golang.org/x/text v0.35.0
+)
 
 require (
 	github.com/kr/pretty v0.3.1 // indirect

@@ -3,6 +3,8 @@ package misc
 import (
 	"fmt"
 	"time"
+
+	"golang.org/x/text/language"
 )
 
 //----------------------------------------------------------------------------------------------------------------------------//
@@ -126,6 +128,22 @@ func NowUnix() int64 {
 // NowUnixNano --
 func NowUnixNano() int64 {
 	return time.Now().UnixNano()
+}
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+func NormalizeLocale(src string) (locale string, lang string) {
+	l := language.Make(src)
+	locale = l.String()
+	if locale == "und" {
+		locale = "en_US"
+		lang = "en"
+		return
+	}
+
+	b, _ := l.Base()
+	lang = b.String()
+	return
 }
 
 //----------------------------------------------------------------------------------------------------------------------------//
