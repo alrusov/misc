@@ -67,7 +67,7 @@ func (m InterfaceMap) GetFloat(name string) (v float64, err error) {
 
 	v, err = Iface2Float(x)
 	if err != nil {
-		err = fmt.Errorf("%s: %s", name, err.Error())
+		err = fmt.Errorf("%s: %w", name, err)
 		return
 	}
 
@@ -84,7 +84,7 @@ func (m InterfaceMap) GetInt(name string) (v int64, err error) {
 
 	v, err = Iface2Int(x)
 	if err != nil {
-		err = fmt.Errorf("%s: %s", name, err.Error())
+		err = fmt.Errorf("%s: %w", name, err)
 		return
 	}
 
@@ -101,7 +101,7 @@ func (m InterfaceMap) GetUint(name string) (v uint64, err error) {
 
 	v, err = Iface2Uint(x)
 	if err != nil {
-		err = fmt.Errorf("%s: %s", name, err.Error())
+		err = fmt.Errorf("%s: %w", name, err)
 		return
 	}
 
@@ -118,7 +118,7 @@ func (m InterfaceMap) GetString(name string) (v string, err error) {
 
 	v, err = Iface2String(x)
 	if err != nil {
-		err = fmt.Errorf("%s: %s", name, err.Error())
+		err = fmt.Errorf("%s: %w", name, err)
 		return
 	}
 
@@ -135,7 +135,7 @@ func (m InterfaceMap) GetBool(name string) (v bool, err error) {
 
 	v, err = Iface2Bool(x)
 	if err != nil {
-		err = fmt.Errorf("%s: %s", name, err.Error())
+		err = fmt.Errorf("%s: %w", name, err)
 		return
 	}
 
@@ -152,7 +152,7 @@ func (m InterfaceMap) GetTime(name string) (v time.Time, err error) {
 
 	v, err = Iface2Time(x)
 	if err != nil {
-		err = fmt.Errorf("%s: %s", name, err.Error())
+		err = fmt.Errorf("%s: %w", name, err)
 		return
 	}
 

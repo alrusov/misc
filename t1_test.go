@@ -32,13 +32,13 @@ func TestIMcoder(t *testing.T) {
 
 	buf, err := MarshalBin(src)
 	if err != nil {
-		t.Errorf("%s", err.Error())
+		t.Errorf("%s", err)
 		return
 	}
 
 	err = UnmarshalBin(buf, &dst)
 	if err != nil {
-		t.Errorf("%s", err.Error())
+		t.Errorf("%s", err)
 		return
 	}
 
@@ -121,7 +121,7 @@ func TestAbsPath(t *testing.T) {
 		i++
 		out, err := AbsPath(p.in)
 		if err != nil {
-			t.Errorf(`Case %d failed: in "%s", got error "%s"`, i, p.in, err.Error())
+			t.Errorf(`Case %d failed: in "%s", got error "%s"`, i, p.in, err)
 			continue
 		}
 		if out != p.out {
@@ -195,7 +195,7 @@ func TestParseJSONtime(t *testing.T) {
 	for i, d := range src {
 		tt, err := ParseJSONtime(d.s)
 		if err != nil {
-			t.Errorf(`"%s": %s`, d.s, err.Error())
+			t.Errorf(`"%s": %s`, d.s, err)
 			continue
 		}
 		if !tt.Equal(d.expected) {
