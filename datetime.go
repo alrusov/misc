@@ -132,7 +132,29 @@ func NowUnixNano() int64 {
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
+type (
+	localeCacheElm = struct {
+		locale string
+		lang   string
+	}
+)
+
+var (
+	localesCache = make(map[string]localeCacheElm, 32)
+)
+
 func NormalizeLocale(src string) (locale string, lang string) {
+	if c, exists := localesCache[src]; exists {
+		return c.locale, c.lang
+	}
+
+	defer func() {
+		localesCache[src] = localeCacheElm{
+			locale: locale,
+			lang:   lang,
+		}
+	}()
+
 	l := language.Make(src)
 	locale = l.String()
 	if locale == "und" {
