@@ -1,10 +1,10 @@
 module github.com/alrusov/misc
 
-go 1.26.1
+go 1.26.4
 
 require (
 	github.com/essentialkaos/translit v2.0.3+incompatible
-	golang.org/x/text v0.35.0
+	golang.org/x/text v0.38.0
 )
 
 require (

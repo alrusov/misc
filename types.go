@@ -629,6 +629,10 @@ func FieldByName(obj reflect.Value, name string) (v any, err error) {
 		return
 	}
 
+	if !obj.IsValid() {
+		return
+	}
+
 	v = obj.Interface()
 	return
 }
