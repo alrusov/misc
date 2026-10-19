@@ -578,12 +578,42 @@ func bs2String(v reflect.Value) (s string, err error) {
 
 //----------------------------------------------------------------------------------------------------------------------------//
 
-func FieldByName(obj reflect.Value, name string) (v any, err error) {
-	path := strings.Split(name, ".")
+func FieldByName(obj reflect.Value, name string, scalar bool) (v any, err error) {
+	vv, err := fieldByName(obj, name, scalar)
+	if err != nil {
+		return
+	}
 
-	var i int
-	var fn string
-	for i, fn = range path {
+	if !vv.CanInterface() {
+		err = fmt.Errorf("illegal field %s", name)
+		return
+	}
+
+	v = vv.Interface()
+	return
+}
+
+func TypedFieldByName[T any](obj reflect.Value, name string, scalar bool) (v T, err error) {
+	f, err := fieldByName(obj, name, scalar)
+	if err != nil {
+		return
+	}
+
+	if reflect.TypeOf(v).Kind() == reflect.Pointer {
+		f = f.Addr()
+	}
+
+	v, ok := reflect.TypeAssert[T](f)
+	if !ok {
+		err = fmt.Errorf("field %q is %s, expected %T", name, f.Type(), v)
+		return
+	}
+
+	return v, nil
+}
+
+func fieldByName(obj reflect.Value, name string, scalar bool) (v reflect.Value, err error) {
+	for fn := range strings.SplitSeq(name, ".") {
 		if IsNil(obj) {
 			return
 		}
@@ -593,20 +623,16 @@ func FieldByName(obj reflect.Value, name string) (v any, err error) {
 		}
 
 		if obj.Kind() != reflect.Struct {
-			err = fmt.Errorf(`"%s" is not a struct or pointer to struct (%s)`, strings.Join(path[:i+1], "."), obj.Kind())
+			err = fmt.Errorf(`%s in "%s" is not a struct or pointer to struct (%s)`, fn, name, obj.Kind())
 			return
 		}
 
 		obj = obj.FieldByName(fn)
 		if !obj.IsValid() {
-			break
+			err = fmt.Errorf(`unknown field "%s"`, name)
+			return
 		}
 
-	}
-
-	if !obj.IsValid() {
-		err = fmt.Errorf(`unknown field "%s"`, strings.Join(path[:i+1], "."))
-		return
 	}
 
 	if obj.Kind() == reflect.Pointer {
@@ -625,15 +651,13 @@ func FieldByName(obj reflect.Value, name string) (v any, err error) {
 		reflect.Map,
 		reflect.Chan,
 		reflect.Func:
-		err = fmt.Errorf(`"%s" does not have a simple type or a pointer to tham (%s)`, strings.Join(path[:i+1], "."), obj.Kind())
-		return
+		if scalar {
+			err = fmt.Errorf(`"%s" is not a scalar type and is not a pointer to one (%s)`, name, obj.Kind())
+			return
+		}
 	}
 
-	if !obj.IsValid() {
-		return
-	}
-
-	v = obj.Interface()
+	v = obj
 	return
 }
 

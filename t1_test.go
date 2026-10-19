@@ -332,9 +332,7 @@ func TestUnsafeString2ByteSlice(b *testing.T) {
 func BenchmarkUnsafeByteSlice2String(b *testing.B) {
 	q := []byte(qs)
 
-	b.StartTimer()
-
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = UnsafeByteSlice2String(q)
 	}
 
@@ -345,9 +343,7 @@ func BenchmarkUnsafeByteSlice2String(b *testing.B) {
 func BenchmarkStdByteSlice2String(b *testing.B) {
 	q := []byte(qs)
 
-	b.StartTimer()
-
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = string(q)
 	}
 
@@ -356,9 +352,8 @@ func BenchmarkStdByteSlice2String(b *testing.B) {
 }
 
 func BenchmarkUnsafeString2ByteSlice(b *testing.B) {
-	b.StartTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = UnsafeString2ByteSlice(qs)
 	}
 
@@ -367,9 +362,8 @@ func BenchmarkUnsafeString2ByteSlice(b *testing.B) {
 }
 
 func BenchmarkStdString2ByteSlice(b *testing.B) {
-	b.StartTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = []byte(qs)
 	}
 
@@ -421,9 +415,7 @@ func BenchmarkJoinByteSlices(b *testing.B) {
 		list[i] = []byte(v)
 	}
 
-	b.ResetTimer()
-
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = JoinByteSlices(prefix, suffix, sep, list)
 	}
 
@@ -440,9 +432,7 @@ func BenchmarkJoinByteSlicesStd(b *testing.B) {
 		list[i] = []byte(v)
 	}
 
-	b.ResetTimer()
-
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		b := prefix
 		b = append(b, bytes.Join(list, sep)...)
 		_ = append(b, suffix...)
@@ -462,9 +452,8 @@ func TestJoinStrings(t *testing.T) {
 }
 
 func BenchmarkJoinString(b *testing.B) {
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = JoinStrings(testJoinPrefix, testJoinSuffix, testJoinSeparator, testJoinList)
 	}
 
@@ -472,9 +461,8 @@ func BenchmarkJoinString(b *testing.B) {
 }
 
 func BenchmarkJoinStringStd(b *testing.B) {
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = strings.Join([]string{testJoinPrefix, strings.Join(testJoinList, testJoinSeparator), testJoinSuffix}, "")
 	}
 
@@ -655,7 +643,7 @@ func TestFieldByName(t *testing.T) {
 	dataV := reflect.ValueOf(data)
 
 	for i, c := range cases {
-		val, err := FieldByName(dataV, c.name)
+		val, err := FieldByName(dataV, c.name, true)
 
 		if c.isErr {
 			if err == nil {
