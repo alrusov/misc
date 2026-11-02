@@ -866,6 +866,23 @@ func StructTagOpts(f *reflect.StructField, tag string) (opts StringMap) {
 	return
 }
 
+// Регулярное выражение для поиска пар ключ:"значение" в теге
+var tagRegex = regexp.MustCompile(`([a-zA-Z0-9_]+):"([^"]+)"`)
+
+func AllFieldTags(tag reflect.StructTag) map[string]string {
+	result := make(map[string]string)
+
+	matches := tagRegex.FindAllStringSubmatch(string(tag), -1)
+	for _, match := range matches {
+		if len(match) == 3 {
+			// match[1] — это ключ (например, "json"), match[2] — значение (например, "id")
+			result[match[1]] = match[2]
+		}
+	}
+
+	return result
+}
+
 //----------------------------------------------------------------------------------------------------------------------------//
 
 func SplitAndTrim(src string, delimiter string) (dst []string) {
