@@ -2,6 +2,7 @@ package misc
 
 import (
 	"bytes"
+	"math"
 	"reflect"
 	"runtime"
 	"strings"
@@ -238,6 +239,19 @@ func TestInterval2Int64(t *testing.T) {
 		{" 30  5h    2m  30    ", false, int64(30*time.Second + 5*time.Hour + 2*time.Minute + 30*time.Second)},
 		{"10ms11ns", false, int64(10*time.Millisecond + 11*time.Nanosecond)},
 		{"10ms11ns5w", false, int64(10*time.Millisecond + 11*time.Nanosecond + 5*7*24*time.Hour)},
+		// переполнение int64 наносекунд
+		{"9223372036s", false, 9223372036 * int64(time.Second)},
+		{"-9223372036s", false, -9223372036 * int64(time.Second)},
+		{"9223372037s", true, 0},
+		{"9223372037", true, 0},
+		{"-9223372037s", true, 0},
+		{"9007199254740991s", true, 0},
+		{"9223372036854775807ns", false, math.MaxInt64},
+		{"9223372036854775807ns1ns", true, 0},
+		{"9223372036s 1s", true, 0},
+		{"15250w", false, 15250 * 7 * 24 * int64(time.Hour)},
+		{"15251w", true, 0},
+		{"9223372036854775808ns", true, 0},
 	}
 
 	for i, df := range cases {

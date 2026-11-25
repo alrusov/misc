@@ -2,6 +2,7 @@ package misc
 
 import (
 	"fmt"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -89,7 +90,15 @@ func Interval2Int64(interval string) (int64, error) {
 			return 0, err
 		}
 
-		val += n * m
+		if n > math.MaxInt64/m {
+			return 0, fmt.Errorf(`interval "%s" is too large`, interval)
+		}
+		n *= m
+
+		if val > math.MaxInt64-n {
+			return 0, fmt.Errorf(`interval "%s" is too large`, interval)
+		}
+		val += n
 	}
 
 	return sign * val, nil
